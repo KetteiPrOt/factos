@@ -53,4 +53,12 @@ echo 	RewriteRule . /200.html [L]
 echo ^</IfModule^>
 ) > public/.htaccess
 
+REM // public/.gitignore
+(
+echo *
+echo !.gitignore
+echo !.htaccess
+echo !index.php
+) > public/.gitignore
+
 echo Laravel's files in '/public' directory restored
