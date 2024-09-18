@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\Products\IceTypeSeeder;
+use Database\Seeders\Products\VatRateSeeder;
+use Database\Seeders\Products\Seeder as ProductSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,6 +20,12 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        $this->call([
+            VatRateSeeder::class,
+            IceTypeSeeder::class,
+            ProductSeeder::class
         ]);
     }
 }
