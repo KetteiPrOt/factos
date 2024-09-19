@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code', 25);
             $table->string('name', 255);
-            $table->decimal('price', 8, 2); // max price: 999 999 . 99
+            $table->decimal('price', 8, 2)->unsigned(); // price between: 0.00 - 999 999 . 99
             $table->string('additional_info', 255)->nullable();
             $table->boolean('tourism_vat_applies')->default(false);
             $table->boolean('ice_applies')->default(false);

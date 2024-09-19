@@ -2,6 +2,7 @@
 
 namespace App\Models\Products;
 
+use App\Models\User;
 use Database\Factories\Products\Factory as ProductFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,5 +40,10 @@ class Model extends BaseModel
     public function vatRate(): BelongsTo
     {
         return $this->belongsTo(VatRate::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
