@@ -37,7 +37,7 @@
 
 <nav class="fixed top-0 w-full flex flex-row gap-4 bg-[--color-theme-1] text-slate-50 place-items-center p-4">
     <div>
-        <a class=" font-semibold text-4xl" href="/" on:click={closeLBarVisible}>
+        <a class=" font-semibold text-4xl" href="/home" on:click={closeLBarVisible}>
             Factos
         </a>
     </div>
@@ -84,7 +84,7 @@
                 <div transition:slide={{axis: "y"}} class="absolute top-[32px] w-full bg-slate-50/70 backdrop-blur rounded-b-md p-1 text-[--color-theme-1] font-medium text-center">
                     <ul>
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                            <a class="block" href="/" on:click={()=>closeAllDrops()}>
+                            <a class="block" href="/home" on:click={()=>closeAllDrops()}>
                                 Factura
                             </a>
                         </li>
@@ -174,7 +174,7 @@
                     <div transition:slide={{axis: "y"}} class="absolute top-[32px] w-full bg-slate-50/70 backdrop-blur  rounded-b-md p-1 text-[--color-theme-1] font-medium text-center z-10">
                         <ul>
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                                <a class="block" href="/" on:click={closeLBarVisible}>
+                                <a class="block" href="/home" on:click={closeLBarVisible}>
                                     Factura
                                 </a>
                             </li>
