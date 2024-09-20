@@ -21,7 +21,7 @@ class ProductController extends Controller
         )->join(
             'vat_rates', 'vat_rates.id', '=', 'products.vat_rate_id'
         )->where(
-            'products.user_id', Auth::user()->id
+            'products.user_id', Auth::user()?->id ?? 1
         )->where(
             'products.code', 'LIKE', '%'.($validated['code'] ?? null).'%'
         )->where(
@@ -35,7 +35,7 @@ class ProductController extends Controller
         $validated = $request->validated();
         $validated['tourism_vat_applies'] = isset($validated['tourism_vat_applies']);
         $validated['ice_applies'] = isset($validated['ice_applies']);
-        $validated['user_id'] = Auth::user()->id;
+        $validated['user_id'] = Auth::user()?->id ?? 1;
         Product::create($validated);
         return response(['message' => 'Guardado.'], 200);
     }
