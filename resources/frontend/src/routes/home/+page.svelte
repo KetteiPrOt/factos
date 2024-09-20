@@ -1,59 +1,31 @@
 <script>
-	import Counter from '../Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+	import SectionAdquiriente from "$lib/sections/factura/SectionAdquiriente.svelte";
+	import SectionBtns from "$lib/sections/factura/SectionBtns.svelte";
+	import SectionCamposAdicionales from "$lib/sections/factura/SectionCamposAdicionales.svelte";
+	import SectionDetalles from "$lib/sections/factura/SectionDetalles.svelte";
+	import SectionFormasDePago from "$lib/sections/factura/SectionFormasDePago.svelte";
+import SectionOrigen from "$lib/sections/factura/SectionOrigen.svelte";
+	import SectionResumenValores from "$lib/sections/factura/SectionResumenValores.svelte";
+	import { fade } from "svelte/transition";
+
+	
 </script>
 
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
-</svelte:head>
-
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
-</section>
-
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
-
-	h1 {
-		width: 100%;
-	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
-</style>
+<div in:fade class="flex flex-col p-5 gap-5 w-fit max-w-full ">
+    <h2 class="font-bold text-3xl text-center">Factura</h2>
+    <div class="flex flex-col gap-7">
+        <div class="flex flex-wrap gap-7 w-fit justify-center self-center">
+            <SectionOrigen />
+            <SectionAdquiriente />
+        </div>
+        <SectionDetalles />
+        <div class="flex flex-wrap gap-7 w-fit justify-center max-w-full self-center">
+            <div class="flex flex-col gap-7 w-fit max-w-full">
+                <SectionFormasDePago />
+                <SectionCamposAdicionales />
+            </div>
+            <SectionResumenValores />
+        </div>
+        <SectionBtns />
+    </div>
+</div>
