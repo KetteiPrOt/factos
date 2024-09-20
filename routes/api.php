@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\Login;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Products\Controller as ProductController;
+use App\Http\Controllers\Products\IceTypeController;
+use App\Http\Controllers\Products\VatRateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,3 +18,6 @@ Route::controller(ProductController::class)->group(function (){
     Route::get('/products', 'index')->name('products.index');
     Route::post('/products', 'store')->name('products.store');
 });
+
+Route::get('/vat-rates', [VatRateController::class, 'index']);
+Route::get('/ice-types', [IceTypeController::class, 'index']);

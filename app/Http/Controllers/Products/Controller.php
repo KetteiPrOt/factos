@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Products;
 
+use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\Products\IndexRequest;
 use App\Http\Requests\Products\StoreRequest;
 use App\Models\Products\Model as Product;
 use Illuminate\Support\Facades\Auth;
 
-class ProductController extends Controller
+class Controller extends BaseController
 {
     public function index(IndexRequest $request)
     {
