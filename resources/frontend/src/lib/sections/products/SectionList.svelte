@@ -8,38 +8,31 @@
 	import { AiFillCaretDown, AiFillFastBackward, AiFillFastForward } from "svelte-icons-pack/ai";
 	import { BiDownload } from "svelte-icons-pack/bi";
 	import type { Writable } from "svelte/store";
+    import { fade, fly, slide } from "svelte/transition";
 
-    export let nameToSearch: Writable<string>;
-    export let codeToSearch: Writable<string>;
+    export let products: Writable<product[]>;
 
-    let products : Array<product> = [];
 
     async function loadProducts () {
-        const res = await fetch(`${$api_rest === "on" ? $url_api+"/products" : "/data_test/products.json"}`,
+        if ($api_rest != "on") {
+            $products = [];
+            return;
+        }
+
+        const res = await fetch(`${$url_api+"/products"}`,
             {
                 headers: {'Accept': 'application/json'}
             }
         );
         
-        products = []
+        $products = []
         const data = await res.json();
         if (Array.isArray(data)) {
-            products = data
+            $products = data
         }
     };
     
-    async function searchProducts () {
-        const res = await fetch(`${url_api}/products?code=${$codeToSearch}&name=${$nameToSearch}`,
-            {
-                headers: {'Accept': 'application/json'}
-            }
-        );
-        products = []
-        const data = await res.json();
-        if (Array.isArray(data)) {
-            products = data
-        }
-    }
+    
     
     onMount(loadProducts)
 
@@ -48,8 +41,6 @@
     <h3 class="font-semibold text-lg px-3 py-1">
         Lista de productos
     </h3>
-    <span>{$nameToSearch}</span>
-    <span>{$codeToSearch}</span>
     <div class="block w-full  rounded-md max-w-full overflow-x-auto">
         <table class="max-w-full w-full border-collapse text-center">
             <thead class="bg-[--color-theme-1]">
@@ -62,12 +53,12 @@
                 </tr>
             </thead>
             <tbody>
-                {#each products as product}
-                <tr>
+                {#each $products as product}
+                <tr in:fade>
                     <td>{product.code}</td>
                     <td>{product.name}</td>
-                    <td>{product.price.toFixed(2)}</td>
-                    <td>{product.vat}%</td>
+                    <td>{product.price}</td>
+                    <td>{product.vat_rate}</td>
                     <td>
                         <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50 m-auto">
                             <Icon src={AiFillCaretDown}/>
@@ -77,17 +68,17 @@
                 {/each}
             </tbody>
         </table>
-        <div class="w-full bg-[--color-theme-1] flex flex-row justify-center text-slate-50 p-1 place-items-center gap-4">
-            <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50">
-                <Icon src={AiFillFastBackward} size={20}/>
-            </button>
-            <span>
-                ( 1 de X )
-            </span>
-            <button class="flex flex-row gap-2 align-middle bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50">
-                <Icon src={AiFillFastForward} size={20}/>
-            </button>
-        </div>
+    </div>
+    <div class="w-full bg-[--color-theme-1] flex flex-row justify-center text-slate-50 p-1 place-items-center gap-4 rounded-b-md">
+        <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50">
+            <Icon src={AiFillFastBackward} size={20}/>
+        </button>
+        <span>
+            ( 1 de X )
+        </span>
+        <button class="flex flex-row gap-2 align-middle bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50">
+            <Icon src={AiFillFastForward} size={20}/>
+        </button>
     </div>
     <button class="flex flex-row gap-2 text-[--color-theme-1] mt-2 px-3 py-1 rounded-md border border-transparent hover:border-[--color-theme-1] hover:bg-slate-200">
         <Icon src={BiDownload} size={20}/>

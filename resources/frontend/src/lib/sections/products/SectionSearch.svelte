@@ -1,8 +1,11 @@
 <script lang="ts">
+    import { api_rest, url_api } from "$lib/global_stores/config";
+    import type { product } from "$lib/interfaces/product";
 	import { Icon } from "svelte-icons-pack";
 	import { AiOutlineSearch } from "svelte-icons-pack/ai";
 	import type { Writable } from "svelte/store";
 
+    export let products: Writable<product[]>;
     export let nameToSearch: Writable<string>;
     export let codeToSearch: Writable<string>;
 
@@ -16,6 +19,24 @@
         const target = e.target as HTMLInputElement;
         const value = target.value;
         $codeToSearch = value;
+    }
+
+    async function searchProducts () {
+        if ($api_rest !== "on") {
+            $products = [];
+            return;
+        }
+
+        const res = await fetch(`${$url_api}/products?code=${$codeToSearch}&name=${$nameToSearch}`,
+            {
+                headers: {'Accept': 'application/json'}
+            }
+        );
+        $products = []
+        const data = await res.json();
+        if (Array.isArray(data)) {
+            $products = data
+        }
     }
 
 </script>
@@ -35,7 +56,7 @@
         </div>
     </section>
     <section class="flex justify-center">
-        <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50">
+        <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50" on:click={searchProducts}>
             <Icon src={AiOutlineSearch} />
             <span>Buscar</span>
         </button>
