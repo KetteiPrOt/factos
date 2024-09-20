@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Products;
 use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\Products\IndexRequest;
 use App\Http\Requests\Products\StoreRequest;
+use App\Http\Requests\Products\UpdateRequest;
 use App\Models\Products\Model as Product;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,5 +40,20 @@ class Controller extends BaseController
         $validated['user_id'] = Auth::user()?->id ?? 1;
         Product::create($validated);
         return response(['message' => 'Guardado.'], 200);
+    }
+
+    public function show(Product $product)
+    {
+        return $product;
+    }
+
+    public function update(UpdateRequest $request, Product $product)
+    {
+        $validated = $request->validated();
+        $validated['tourism_vat_applies'] = isset($validated['tourism_vat_applies']);
+        $validated['ice_applies'] = isset($validated['ice_applies']);
+        $validated['user_id'] = Auth::user()?->id ?? 1;
+        $product->update($validated);
+        return response(['message' => 'Actualizado.'], 200);
     }
 }

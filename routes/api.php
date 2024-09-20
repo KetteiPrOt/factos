@@ -13,10 +13,13 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/login', [Login::class, 'login']);
 
-// Route::middleware(['auth:sanctum'])->controller(ProductController::class)->group(function (){
+// Route::middleware(['auth:sanctum'])
+//      ->controller(ProductController::class)->group(function (){
 Route::controller(ProductController::class)->group(function (){
     Route::get('/products', 'index')->name('products.index');
     Route::post('/products', 'store')->name('products.store');
+    Route::get('/products/{product}', 'show')->name('products.show');
+    Route::put('/products/{product}', 'update')->name('products.update');
 });
 
 Route::get('/vat-rates', [VatRateController::class, 'index']);
