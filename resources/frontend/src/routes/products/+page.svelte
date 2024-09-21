@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { product } from '$lib/interfaces/product';
+    import type { Product } from '$lib/interfaces/product';
 	import ModalNewProduct from '$lib/sections/products/ModalNewProduct.svelte';
 	import SectionList from '$lib/sections/products/SectionList.svelte';
 	import SectionOptions from '$lib/sections/products/SectionOptions.svelte';
@@ -12,11 +12,30 @@
 
 	export const nameToSearch = writable("");
 	export const codeToSearch = writable("");
-	export const products: Writable<product[]> = writable([]);
+	export const products: Writable<Product[]> = writable([]);
 
     function toogleModalVisible () {
         modalVisible = !modalVisible;
     }
+
+	//REQUEST FUNCTIONS
+	async function loadProducts () {
+        const res = await fetch('/api/products',
+            {
+                headers: {'Accept': 'application/json'}
+            }
+        );
+        
+        $products = []
+        const data = await res.json();
+        if (Array.isArray(data)) {
+            $products = data
+        }
+    };
+
+	const requestFunctions = {
+		loadProducts: loadProducts
+	}
 
 </script>
 
@@ -25,7 +44,7 @@
 	<div class="flex flex-col gap-5">
 		<SectionSearch products={products} nameToSearch={nameToSearch} codeToSearch={codeToSearch} />
 		<SectionOptions toogleModalVisible={toogleModalVisible} />
-		<SectionList products={products} />
+		<SectionList products={products} requestFunctions={requestFunctions} />
 	</div>
-	<ModalNewProduct visible={modalVisible} toogleModalVisible={toogleModalVisible} />
+	<ModalNewProduct requestFunctions={requestFunctions} visible={modalVisible} toogleModalVisible={toogleModalVisible} />
 </div>

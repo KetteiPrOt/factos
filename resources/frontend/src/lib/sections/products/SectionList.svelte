@@ -9,26 +9,17 @@
 	import type { Writable } from "svelte/store";
     import { fade, fly, slide } from "svelte/transition";
 
+    export let requestFunctions: {
+        loadProducts: () => Promise<void>;
+    }
     export let products: Writable<Product[]>;
 
 
-    async function loadProducts () {
-        const res = await fetch('/api/products',
-            {
-                headers: {'Accept': 'application/json'}
-            }
-        );
-        
-        $products = []
-        const data = await res.json();
-        if (Array.isArray(data)) {
-            $products = data
-        }
-    };
+   
     
     
     
-    onMount(loadProducts)
+    onMount(requestFunctions.loadProducts)
 
 </script>
 <section class="max-w-full">
