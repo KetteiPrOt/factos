@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { api_rest, url_api } from "$lib/global_stores/config";
     import type { Product } from "$lib/interfaces/product";
 	import { Icon } from "svelte-icons-pack";
 	import { AiOutlineSearch } from "svelte-icons-pack/ai";
@@ -22,12 +21,7 @@
     }
 
     async function searchProducts () {
-        if ($api_rest !== "on") {
-            $products = [];
-            return;
-        }
-
-        const res = await fetch(`${$url_api}/products?code=${$codeToSearch}&name=${$nameToSearch}`,
+        const res = await fetch(`/api/products?code=${$codeToSearch}&name=${$nameToSearch}`,
             {
                 headers: {'Accept': 'application/json'}
             }

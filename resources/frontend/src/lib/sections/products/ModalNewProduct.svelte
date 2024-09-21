@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { url_api } from "$lib/global_stores/config";
     import type { Ice } from "$lib/interfaces/ice";
     import type { ProductPost } from "$lib/interfaces/product";
     import type { Vat } from "$lib/interfaces/vat";
@@ -42,8 +41,8 @@
     }
     
     async function getDefaultParams () {
-        const resVat = await fetch(`${$url_api}/vat-rates`);
-        const resIce = await fetch(`${$url_api}/ice-types`);
+        const resVat = await fetch('/api/vat-rates');
+        const resIce = await fetch('/api/ice-types');
 
         const dataVat = await resVat.json();
         const dataIce = await resIce.json();
@@ -138,7 +137,7 @@
         if (!valid) {return}
 
         console.log(newProduct)
-        const res = await fetch(`https://factos.test/api/products`, {
+        const res = await fetch('/api/products', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -152,7 +151,7 @@
 
     onMount(getDefaultParams);
     onMount(async () => {
-        fetch('https://factos.test/sanctum/csrf-cookie', {headers: {'Accept': 'application/json', 'Origin': 'http://localhost:5173', 'Referer': 'http://localhost:5173/products'}, credentials: 'include'})
+        fetch('/sanctum/csrf-cookie', {headers: {'Accept': 'application/json'}, credentials: 'include'})
         .then(res => console.log(res));
     })
 

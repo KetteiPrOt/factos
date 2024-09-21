@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { api_rest, url_api } from "$lib/global_stores/config";
 	import type { Product } from "$lib/interfaces/product";
 	import { onMount } from "svelte";
 
@@ -14,12 +13,7 @@
 
 
     async function loadProducts () {
-        if ($api_rest != "on") {
-            $products = [];
-            return;
-        }
-
-        const res = await fetch(`${$url_api+"/products"}`,
+        const res = await fetch('/api/products',
             {
                 headers: {'Accept': 'application/json'}
             }
