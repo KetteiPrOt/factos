@@ -20,3 +20,6 @@ yarn-error.log
 /.vscode
 /.zed
 /.svelte-kit
+
+
+/config/cors.php

@@ -1,11 +1,11 @@
 <script lang="ts">
     import { api_rest, url_api } from "$lib/global_stores/config";
-    import type { product } from "$lib/interfaces/product";
+    import type { Product } from "$lib/interfaces/product";
 	import { Icon } from "svelte-icons-pack";
 	import { AiOutlineSearch } from "svelte-icons-pack/ai";
 	import type { Writable } from "svelte/store";
 
-    export let products: Writable<product[]>;
+    export let products: Writable<Product[]>;
     export let nameToSearch: Writable<string>;
     export let codeToSearch: Writable<string>;
 

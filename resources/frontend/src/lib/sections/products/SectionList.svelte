@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { api_rest, url_api } from "$lib/global_stores/config";
-	import type { product } from "$lib/interfaces/product";
+	import type { Product } from "$lib/interfaces/product";
 	import { onMount } from "svelte";
 
 
@@ -10,7 +10,7 @@
 	import type { Writable } from "svelte/store";
     import { fade, fly, slide } from "svelte/transition";
 
-    export let products: Writable<product[]>;
+    export let products: Writable<Product[]>;
 
 
     async function loadProducts () {
