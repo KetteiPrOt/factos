@@ -3,6 +3,8 @@
 	import { AiFillCaretDown, AiOutlineClose, AiOutlineMenu } from "svelte-icons-pack/ai";
     import { slide, scale } from "svelte/transition";
 
+    import { base } from "$app/paths";
+
     //Visibility
     let lateralBarVisible = false;
     let dropConfVisible = false;
@@ -37,7 +39,7 @@
 
 <nav class="fixed top-0 w-full flex flex-row gap-4 bg-[--color-theme-1] text-slate-50 place-items-center p-4">
     <div>
-        <a class=" font-semibold text-4xl" href="/home" on:click={closeLBarVisible}>
+        <a class=" font-semibold text-4xl" href={`${base}/home`} on:click={closeLBarVisible}>
             Factos
         </a>
     </div>
@@ -57,7 +59,7 @@
                             </button>
                         </li>
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                            <a class="block" href="/products" on:click={()=>closeAllDrops()}>
+                            <a class="block" href={`${base}/products`} on:click={()=>closeAllDrops()}>
                                 Productos y servicios
                             </a>
                         </li>
@@ -67,7 +69,7 @@
                             </button>
                         </li>
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                            <a class="block" href="/dev_config" on:click={()=>closeAllDrops()}>
+                            <a class="block" href={`${base}/dev_config`} on:click={()=>closeAllDrops()}>
                                 Dev Config
                             </a>
                         </li>
@@ -84,7 +86,7 @@
                 <div transition:slide={{axis: "y"}} class="absolute top-[32px] w-full bg-slate-50/70 backdrop-blur rounded-b-md p-1 text-[--color-theme-1] font-medium text-center">
                     <ul>
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                            <a class="block" href="/home" on:click={()=>closeAllDrops()}>
+                            <a class="block" href={`${base}/home`} on:click={()=>closeAllDrops()}>
                                 Factura
                             </a>
                         </li>
@@ -147,7 +149,7 @@
                                 </button>
                             </li>
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                                <a class="block" href="/products" on:click={closeLBarVisible}>
+                                <a class="block" href={`${base}/products`} on:click={closeLBarVisible}>
                                     Productos y servicios
                                 </a>
                             </li>
@@ -157,7 +159,7 @@
                                 </button>
                             </li>
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                                <a class="block" href="/dev_config" on:click={closeLBarVisible}>
+                                <a class="block" href={`${base}/dev_config`} on:click={closeLBarVisible}>
                                     Dev Config
                                 </a>
                             </li>
@@ -174,7 +176,7 @@
                     <div transition:slide={{axis: "y"}} class="absolute top-[32px] w-full bg-slate-50/70 backdrop-blur  rounded-b-md p-1 text-[--color-theme-1] font-medium text-center z-10">
                         <ul>
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                                <a class="block" href="/home" on:click={closeLBarVisible}>
+                                <a class="block" href={`${base}/home`} on:click={closeLBarVisible}>
                                     Factura
                                 </a>
                             </li>

@@ -5,7 +5,8 @@
     import type { Vat } from "$lib/interfaces/vat";
     import { onMount } from "svelte";
 	import { blur, fade, slide } from "svelte/transition";
-
+    
+    
     export let visible: boolean;
     export let toogleModalVisible: ()=>void;
 
@@ -151,9 +152,8 @@
 
     onMount(getDefaultParams);
     onMount(async () => {
-        fetch('https://factos.test/sanctum/csrf-cookie', {headers: {'Accept': 'application/json', 'Origin': 'https://factos.test', 'Referer': 'https://factos.test/products'}, credentials: 'include'})
-        .then(res => res.json())
-        .then(data => console.log(data));
+        fetch('https://factos.test/sanctum/csrf-cookie', {headers: {'Accept': 'application/json', 'Origin': 'http://localhost:5173', 'Referer': 'http://localhost:5173/products'}, credentials: 'include'})
+        .then(res => console.log(res));
     })
 
 </script>

@@ -13,6 +13,9 @@ const config = {
 		env: {
 			dir: 'resources/frontend/'
 		},
+		paths: {
+			base: "/app"
+		},
 		files: {
 			assets: 'resources/frontend/static',
 			hooks: {
