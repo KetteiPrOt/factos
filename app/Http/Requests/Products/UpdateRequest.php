@@ -7,7 +7,7 @@ use App\Rules\Products\UniqueFor;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class StoreRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -16,8 +16,9 @@ class StoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $product_id = $this->route('product')->id;
         return [
-            'code' => ['required', 'string', 'max:25', new UniqueFor(User::find(Auth::user()?->id ?? 1))],
+            'code' => ['required', 'string', 'max:25', new UniqueFor(User::find(Auth::user()?->id ?? 1), ignore: $product_id)],
             'name' => 'required|string|max:255',
             'price' => 'required|decimal:0,2|min:0.01|max:999999.99',
             'additional_info' => 'nullable|string|max:255',
