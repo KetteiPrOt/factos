@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Product } from "$lib/interfaces/product";
+	import type { Product, ProductGet } from "$lib/interfaces/product";
 	import { onMount } from "svelte";
 
 
@@ -11,10 +11,30 @@
 
     export let requestFunctions: {
         loadProducts: () => Promise<void>;
+        getProductById: () => Promise<void>;
     }
+
     export let products: Writable<Product[]>;
+    export let productSelected: Writable<ProductGet>;
 
+    export let toogleModalViewProductVisible: ()=>void;
 
+    export let idToSearch: Writable<string>;
+
+    
+
+    function selectProduct (e: MouseEvent) {
+        const target = e.target as HTMLButtonElement;
+        const td = target.parentElement as HTMLTableCellElement
+        const tr = td.parentElement as HTMLTableRowElement
+        
+        if (tr.dataset.id) {
+            $idToSearch = tr.dataset.id;
+            $productSelected = { code: "", name: "", price: 0, vat_rate_id: 0 };
+            requestFunctions.getProductById();
+            toogleModalViewProductVisible();
+        }
+    }
    
     
     
@@ -34,21 +54,37 @@
                     <th>Nombre</th>
                     <th>Valor</th>
                     <th>IVA</th>
-                    <th>Acciones</th>
+                    <!-- <th>Acciones</th> -->
                 </tr>
             </thead>
             <tbody>
                 {#each $products as product}
-                <tr in:fade>
-                    <td>{product.code}</td>
-                    <td>{product.name}</td>
-                    <td>{product.price}</td>
-                    <td>{product.vat_rate}</td>
+                <tr in:fade class="hover:bg-slate-300" data-id="{product.id}">
                     <td>
+                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
+                            {product.code}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
+                            {product.name}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
+                            {product.price}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
+                            {product.vat_rate}
+                        </button>
+                    </td>
+                    <!-- <td>
                         <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50 m-auto">
                             <Icon src={AiFillCaretDown}/>
                         </button>
-                    </td>
+                    </td> -->
                 </tr>
                 {/each}
             </tbody>
@@ -79,7 +115,7 @@
     }
     td {
         border: .5px solid var(--color-border);
-        padding: .5rem;
+        /* padding: .5rem; */
     }
     tbody tr:last-child td:first-child {
         border-radius: 0%;

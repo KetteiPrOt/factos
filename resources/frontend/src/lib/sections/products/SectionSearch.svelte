@@ -20,6 +20,12 @@
         $codeToSearch = value;
     }
 
+    function detectEnter (e: KeyboardEvent) {
+        if (e.key === "Enter") {
+            searchProducts();
+        }
+    }
+
     async function searchProducts () {
         const res = await fetch(`/api/products?code=${$codeToSearch}&name=${$nameToSearch}`,
             {
@@ -40,13 +46,13 @@
             <label for="codigo">
                 Código:
             </label>
-            <input name="codigo" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto" type="text" value={$codeToSearch} on:input={(e)=>updateCodeToSearch(e)}>
+            <input name="codigo" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto" type="text" value={$codeToSearch} on:input={(e)=>updateCodeToSearch(e)} on:keypress={(e)=>detectEnter(e)}>
         </div>
         <div class="flex flex-row gap-2">
             <label for="nombre">
                 Nombre:
             </label>
-            <input name="nombre" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto" type="text" value={$nameToSearch} on:input={(e)=>updateNameToSearch(e)}>
+            <input name="nombre" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto" type="text" value={$nameToSearch} on:input={(e)=>updateNameToSearch(e)} on:keypress={(e)=>detectEnter(e)}>
         </div>
     </section>
     <section class="flex justify-center">
