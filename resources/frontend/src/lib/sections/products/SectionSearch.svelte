@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { api_rest, url_api } from "$lib/global_stores/config";
     import type { Product } from "$lib/interfaces/product";
 	import { Icon } from "svelte-icons-pack";
 	import { AiOutlineSearch } from "svelte-icons-pack/ai";
@@ -21,13 +20,14 @@
         $codeToSearch = value;
     }
 
-    async function searchProducts () {
-        if ($api_rest !== "on") {
-            $products = [];
-            return;
+    function detectEnter (e: KeyboardEvent) {
+        if (e.key === "Enter") {
+            searchProducts();
         }
+    }
 
-        const res = await fetch(`${$url_api}/products?code=${$codeToSearch}&name=${$nameToSearch}`,
+    async function searchProducts () {
+        const res = await fetch(`/api/products?code=${$codeToSearch}&name=${$nameToSearch}`,
             {
                 headers: {'Accept': 'application/json'}
             }
@@ -46,13 +46,13 @@
             <label for="codigo">
                 Código:
             </label>
-            <input name="codigo" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto" type="text" value={$codeToSearch} on:input={(e)=>updateCodeToSearch(e)}>
+            <input name="codigo" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto" type="text" value={$codeToSearch} on:input={(e)=>updateCodeToSearch(e)} on:keypress={(e)=>detectEnter(e)}>
         </div>
         <div class="flex flex-row gap-2">
             <label for="nombre">
                 Nombre:
             </label>
-            <input name="nombre" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto" type="text" value={$nameToSearch} on:input={(e)=>updateNameToSearch(e)}>
+            <input name="nombre" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto" type="text" value={$nameToSearch} on:input={(e)=>updateNameToSearch(e)} on:keypress={(e)=>detectEnter(e)}>
         </div>
     </section>
     <section class="flex justify-center">

@@ -14,3 +14,7 @@ export interface ProductPost extends Omit<Product, 'id' | 'vat_rate' | 'price'> 
     ice_type_id?: number
     vat_rate_id: number
 }
+
+export interface ProductGet extends ProductPost {
+   
+}

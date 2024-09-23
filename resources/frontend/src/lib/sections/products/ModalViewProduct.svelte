@@ -1,26 +1,22 @@
 <script lang="ts">
     import type { Ice } from "$lib/interfaces/ice";
-    import type { ProductPost } from "$lib/interfaces/product";
+    import type { ProductGet, ProductPost } from "$lib/interfaces/product";
     import type { Vat } from "$lib/interfaces/vat";
     import { onMount } from "svelte";
+    import type { Writable } from "svelte/store";
 	import { blur, fade, slide } from "svelte/transition";
     
     export let requestFunctions: {
         loadProducts: () => Promise<void>;
+        getProductById: () => Promise<void>;
     }
     export let visible: boolean;
-    export let toogleModalNewProductVisible: ()=>void;
-
+    export let idToSearch: Writable<string>;
+    export let productSelected: Writable<ProductGet>;
+    export let toogleModalViewProductVisible: ()=>void;
 
     let listVat: Vat[] = [];
     let listIce: Ice[] = [];
-
-    let newProduct: ProductPost = {
-        code: "",
-        name: "",
-        price: 0,
-        vat_rate_id: 0 
-    }
 
     let alertsInput = {
         code: false,
@@ -62,63 +58,63 @@
         listIce = dataIce;
     }
 
-    //Functions for newProduct
+    //Functions for ViewProduct
     function updateCode (e: Event) {
         const target = e.target as HTMLInputElement;
         const value = target.value;
-        newProduct.code = value;
+        $productSelected.code = value;
         alertsInput.code = false;
     }
 
     function updateName (e: Event) {
         const target = e.target as HTMLInputElement;
         const value = target.value;
-        newProduct.name = value;
+        $productSelected.name = value;
         alertsInput.name = false;
     }
 
     function updatePrice (e: Event) {
         const target = e.target as HTMLInputElement;
         const value = parseFloat(target.value);
-        newProduct.price = value;
+        $productSelected.price = value;
         alertsInput.price = false;
     }
 
     function updateInfoAdicional (e: Event) {
         const target = e.target as HTMLInputElement;
         const value = target.value;
-        newProduct.additional_info = value;
-        if (newProduct.additional_info === "") {
-            delete newProduct.additional_info;
+        $productSelected.additional_info = value;
+        if ($productSelected.additional_info === "") {
+            delete $productSelected.additional_info;
         }
     }
 
     function updateVatId (e: Event) {
         const target = e.target as HTMLInputElement;
         const value = parseInt(target.value);
-        newProduct.vat_rate_id = value;
+        $productSelected.vat_rate_id = value;
         alertsInput.vat_rate_id = false;
     }
 
     function updateIceId (e: Event) {
         const target = e.target as HTMLInputElement;
         const value = parseInt(target.value);
-        newProduct.ice_type_id = value;
+        $productSelected.ice_type_id = value;
         alertsInput.ice_type_id = false;
-        if (!newProduct.ice_type_id) {
-            delete newProduct.ice_type_id;
+        if (!$productSelected.ice_type_id) {
+            delete $productSelected.ice_type_id;
         }
     }
 
     function toogleIceApplies (e: Event) {
         const target = e.target as HTMLInputElement;
         const value = target.checked;
-        newProduct.ice_applies = value;
+        $productSelected.ice_applies = value;
         alertsInput.ice_type_id = false;
-        if (newProduct.ice_applies === false) {
-            delete newProduct.ice_applies;
-            if (newProduct.ice_type_id) {
-                delete newProduct.ice_type_id;
+        if ($productSelected.ice_applies === false) {
+            delete $productSelected.ice_applies;
+            if ($productSelected.ice_type_id) {
+                delete $productSelected.ice_type_id;
             }
         }
     } 
@@ -126,40 +122,40 @@
     function toogleTourismIvaApplies (e: Event) {
         const target = e.target as HTMLInputElement;
         const value = target.checked;
-        newProduct.tourism_vat_applies = value;
-        if (newProduct.tourism_vat_applies === false) {
-            delete newProduct.tourism_vat_applies;
+        $productSelected.tourism_vat_applies = value;
+        if ($productSelected.tourism_vat_applies === false) {
+            delete $productSelected.tourism_vat_applies;
         }
     } 
 
     function clearInputs () {
-        newProduct.code = '';
-        newProduct.name = '';
-        newProduct.price = 0;
-        newProduct.vat_rate_id = 0;
-        if ('additional_info' in newProduct) {
-            delete newProduct.additional_info;
+        $productSelected.code = '';
+        $productSelected.name = '';
+        $productSelected.price = 0;
+        $productSelected.vat_rate_id = 0;
+        if ('additional_info' in $productSelected) {
+            delete $productSelected.additional_info;
         }
-        if ('tourism_vat_applies' in newProduct) {
-            delete newProduct.tourism_vat_applies;
+        if ('tourism_vat_applies' in $productSelected) {
+            delete $productSelected.tourism_vat_applies;
         }
-        if ('ice_applies' in newProduct) {
-            delete newProduct.ice_applies;
+        if ('ice_applies' in $productSelected) {
+            delete $productSelected.ice_applies;
         }
-        if ('ice_type_id' in newProduct) {
-            delete newProduct.ice_type_id;
+        if ('ice_type_id' in $productSelected) {
+            delete $productSelected.ice_type_id;
         }
     }
 
-    async function saveNewProduct () {
+    async function saveUpdatedProduct () {
         if (loading) { return };
         let valid = true;
 
-        if (!newProduct.code)  { alertsInput.code = true; valid = false }
-        if (!newProduct.name)  { alertsInput.name = true; valid = false }
-        if (!newProduct.price)  { alertsInput.price = true; valid = false }
-        if (!newProduct.vat_rate_id)  { alertsInput.vat_rate_id = true; valid = false }
-        if (!newProduct.ice_type_id && newProduct.ice_applies)  { alertsInput.ice_type_id = true; valid = false }
+        if (!$productSelected.code)  { alertsInput.code = true; valid = false }
+        if (!$productSelected.name)  { alertsInput.name = true; valid = false }
+        if (!$productSelected.price)  { alertsInput.price = true; valid = false }
+        if (!$productSelected.vat_rate_id)  { alertsInput.vat_rate_id = true; valid = false }
+        if (!$productSelected.ice_type_id && $productSelected.ice_applies)  { alertsInput.ice_type_id = true; valid = false }
 
         Object.values(alertsInput).forEach(alert => {
             if (alert) {
@@ -170,15 +166,15 @@
         if (!valid) {return}
 
         loading = true;
-        const res = await fetch('/api/products', {
+        const res = await fetch('/api/products/'+$idToSearch, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-Xsrf-Token': getCookies()['XSRF-TOKEN']
             },
-            method: 'POST',
+            method: 'PUT',
             credentials: 'include',
-            body: JSON.stringify(newProduct)
+            body: JSON.stringify($productSelected)
         })
 
         const data: {message: string} = await res.json();
@@ -187,9 +183,10 @@
         loading = false;
 
         if (res.ok) {
-            clearInputs();
+            //clearInputs();
             requestFunctions.loadProducts();
-            resMessage = {type: "success", content: "Registro exitoso"}
+            requestFunctions.getProductById();
+            resMessage = {type: "success", content: "Cambios guardados con exito"}
             
         } else if (res.status === 422) {
             resMessage = {type: "error", content: data?.message}
@@ -199,7 +196,7 @@
                 alertsInput.price = true;
             }
         } else {
-            resMessage = {type: "error", content: "Error al registrar el producto"}
+            resMessage = {type: "error", content: "Error al guardar los cambios"}
         }
         setTimeout(() => {
             resMessage = {type: "", content: ""}
@@ -216,34 +213,34 @@
 </script>
 
 {#if visible}
-<button transition:blur class="fixed top-0 left-0 flex flex-col bg-blue-700/60 backdrop-blur w-full h-dvh" on:click={toogleModalNewProductVisible}>
+<button transition:blur class="fixed top-0 left-0 flex flex-col bg-blue-700/60 backdrop-blur w-full h-dvh" on:click={toogleModalViewProductVisible}>
     <button class="m-auto flex flex-col w-[409px] place-items-center gap-2" on:click={(e)=>{e.stopPropagation()}}>
         <button class=" flex flex-col gap-5 p-6 border border-[--color-border] bg-slate-100/80 rounded-md hover:cursor-default" >
             <section>
                 <h3 class=" font-medium text-lg">
-                    Nuevo producto
+                    Detalles del producto
                 </h3>
             </section>
             <section class="flex flex-col gap-3">
                 <div class="flex flex-row gap-5">
                     <label for="code">Código:</label>
-                    <input name="code" class="border border-[--color-border] {alertsInput.code ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateCode(e)} value={newProduct.code}>
+                    <input name="code" class="border border-[--color-border] {alertsInput.code ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateCode(e)} value={$productSelected.code}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="name">Nombre:</label>
-                    <input name="name" class="border border-[--color-border] {alertsInput.name ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateName(e)} value={newProduct.name}>
+                    <input name="name" class="border border-[--color-border] {alertsInput.name ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateName(e)} value={$productSelected.name}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="price">Precio:</label>
-                    <input name="price" class="border border-[--color-border] {alertsInput.price ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={(e)=>updatePrice(e)} value={newProduct.price ? newProduct.price : ''}>
+                    <input name="price" class="border border-[--color-border] {alertsInput.price ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={(e)=>updatePrice(e)} value={$productSelected.price ? $productSelected.price : ''}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="additional_info">Info. Adicional:</label>
-                    <input name="additional_info" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateInfoAdicional(e)} value={newProduct.additional_info ? newProduct.additional_info : ''}>
+                    <input name="additional_info" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateInfoAdicional(e)} value={$productSelected.additional_info ? $productSelected.additional_info : ''}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="vat_rate_id">Tarifa IVA:</label>
-                    <select name="vat_rate_id" class="border border-[--color-border] {alertsInput.vat_rate_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={e=>updateVatId(e)} value={newProduct.vat_rate_id}>
+                    <select name="vat_rate_id" class="border border-[--color-border] {alertsInput.vat_rate_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={e=>updateVatId(e)} value={$productSelected.vat_rate_id}>
                         <option value=""></option>
                         {#each listVat as vat}
                             <option value={vat.id}>{vat.name}</option>
@@ -253,19 +250,19 @@
                 <div class="flex flex-row gap-5">
                     <label for="tourism_vat_applies">Aplicar IVA Turista:</label>
                     <div class="h-[26px] w-[205px] ml-auto flex place-items-start self-center">
-                        <input name="tourism_vat_applies" class="border border-[--color-border] bg-transparent rounded-md px-1 h-[20px] w-[20px] place-self-center" type="checkbox" on:change={(e)=>toogleTourismIvaApplies(e)} checked={newProduct.tourism_vat_applies}>
+                        <input name="tourism_vat_applies" class="border border-[--color-border] bg-transparent rounded-md px-1 h-[20px] w-[20px] place-self-center" type="checkbox" on:change={(e)=>toogleTourismIvaApplies(e)} checked={$productSelected.tourism_vat_applies}>
                     </div> 
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="ice_applies">Aplicar ICE:</label>
                     <div class="h-[26px] w-[205px] ml-auto flex place-items-start self-center">
-                        <input name="ice_applies" class="border border-[--color-border] bg-transparent rounded-md px-1 h-[20px] w-[20px] place-self-center" type="checkbox" on:change={(e)=>toogleIceApplies(e)} checked={newProduct.ice_applies}>
+                        <input name="ice_applies" class="border border-[--color-border] bg-transparent rounded-md px-1 h-[20px] w-[20px] place-self-center" type="checkbox" on:change={(e)=>toogleIceApplies(e)} checked={$productSelected.ice_applies}>
                     </div> 
                 </div>
-                {#if newProduct?.ice_applies}
+                {#if $productSelected?.ice_applies}
                 <div transition:slide={{duration: 200}} class="flex flex-row gap-5">
                     <label for="ice_type_id">Tipo ICE:</label>
-                    <select name="ice_type_id" class="border border-[--color-border] {alertsInput.ice_type_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={(e)=>updateIceId(e)} value={newProduct.ice_type_id ? newProduct.ice_type_id : ''}>
+                    <select name="ice_type_id" class="border border-[--color-border] {alertsInput.ice_type_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={(e)=>updateIceId(e)} value={$productSelected.ice_type_id ? $productSelected.ice_type_id : ''}>
                         <option value=""></option>
                         {#each listIce as ice}
                             <option value={ice.id}>{ice.name}</option>
@@ -275,7 +272,7 @@
                 {/if}
             </section>
             <section class="flex flex-row gap-5 self-start text-slate-50">
-                <button class="h-[34px] bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600" on:click={saveNewProduct}>
+                <button class="h-[34px] bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600" on:click={saveUpdatedProduct}>
                     Guardar
                 </button>
                 <div class="flex">
@@ -284,8 +281,8 @@
                     </div>
                 {/if}
                 </div>
-                <button class="h-[34px] box-border border border-[--color-theme-1] text-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-slate-200" on:click={toogleModalNewProductVisible}>
-                    Cancelar
+                <button class="h-[34px] box-border border border-[--color-theme-1] text-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-slate-200" on:click={toogleModalViewProductVisible}>
+                    Salir
                 </button>
             </section>
         </button>
