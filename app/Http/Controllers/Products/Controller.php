@@ -52,7 +52,12 @@ class Controller extends BaseController
     {
         $validated = $request->validated();
         $validated['tourism_vat_applies'] = isset($validated['tourism_vat_applies']);
-        $validated['ice_applies'] = isset($validated['ice_applies']);
+        if(isset($validated['ice_applies'])){
+            $validated['ice_applies'] = true;
+        } else {
+            $validated['ice_applies'] = false;
+            $validated['ice_type_id'] = null;
+        }
         $validated['user_id'] = Auth::user()?->id ?? 1;
         $product->update($validated);
         return response(['message' => 'Actualizado.'], 200);
