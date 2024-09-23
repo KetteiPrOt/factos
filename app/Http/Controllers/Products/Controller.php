@@ -7,6 +7,7 @@ use App\Http\Requests\Products\IndexRequest;
 use App\Http\Requests\Products\StoreRequest;
 use App\Http\Requests\Products\UpdateRequest;
 use App\Models\Products\Model as Product;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class Controller extends BaseController
@@ -55,5 +56,23 @@ class Controller extends BaseController
         $validated['user_id'] = Auth::user()?->id ?? 1;
         $product->update($validated);
         return response(['message' => 'Actualizado.'], 200);
+    }
+
+    public function destroy(Product $product)
+    {
+        $product->delete();
+        return response(['message' => 'Eliminado.'], 200);
+    }
+
+    public function destroyAll()
+    {
+        $products = User::find(Auth::user()?->id ?? 1)->products;
+        if($products->count() > 0){
+            foreach($products as $product){
+                $product->delete();
+            }
+            return response(['message' => 'Eliminados.'], 200);
+        }
+        return response(['message' => 'No hay productos para eliminar.'], 200);
     }
 }

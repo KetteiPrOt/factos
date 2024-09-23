@@ -20,6 +20,8 @@ Route::controller(ProductController::class)->group(function (){
     Route::post('/products', 'store')->name('products.store');
     Route::get('/products/{product}', 'show')->name('products.show');
     Route::put('/products/{product}', 'update')->name('products.update');
+    Route::delete('/products/{product}', 'destroy')->name('products.destroy');
+    Route::delete('/products', 'destroyAll')->name('products.destroy-all');
 });
 
 Route::get('/vat-rates', [VatRateController::class, 'index']);
