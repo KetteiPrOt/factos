@@ -3,8 +3,11 @@
     import type { ProductGet, ProductPost } from "$lib/interfaces/product";
     import type { Vat } from "$lib/interfaces/vat";
     import { onMount } from "svelte";
+    import { Icon } from "svelte-icons-pack";
+    import { AiOutlineClose } from "svelte-icons-pack/ai";
+    import { BiTrash } from "svelte-icons-pack/bi";
     import type { Writable } from "svelte/store";
-	import { blur, fade, slide } from "svelte/transition";
+	import { blur, fade, scale, slide } from "svelte/transition";
     
     export let requestFunctions: {
         loadProducts: () => Promise<void>;
@@ -32,6 +35,12 @@
     };
 
     let loading = false;
+
+    let confirmDeleteVisible = false;
+
+    function toogleConfirmDeleteVisible () {
+        confirmDeleteVisible = !confirmDeleteVisible;
+    }
 
     function getCookies () {
         let cookies = document.cookie.split(";");
@@ -112,9 +121,10 @@
         $productSelected.ice_applies = value;
         alertsInput.ice_type_id = false;
         if ($productSelected.ice_applies === false) {
-            delete $productSelected.ice_applies;
+            $productSelected.ice_applies = undefined;
             if ($productSelected.ice_type_id) {
                 delete $productSelected.ice_type_id;
+                console.log($productSelected)
             }
         }
     } 
@@ -122,10 +132,12 @@
     function toogleTourismIvaApplies (e: Event) {
         const target = e.target as HTMLInputElement;
         const value = target.checked;
-        $productSelected.tourism_vat_applies = value;
-        if ($productSelected.tourism_vat_applies === false) {
-            delete $productSelected.tourism_vat_applies;
+        if (!value) {
+            $productSelected.tourism_vat_applies = undefined;
+        } else {
+            $productSelected.tourism_vat_applies = true
         }
+        console.log($productSelected);
     } 
 
     function clearInputs () {
@@ -147,6 +159,15 @@
         }
     }
 
+    function refinedProduct () {
+        if (!$productSelected.ice_applies) {
+            $productSelected.ice_applies = undefined;
+        }
+        if (!$productSelected.tourism_vat_applies) {
+            $productSelected.tourism_vat_applies = undefined;
+        }
+    }
+
     async function saveUpdatedProduct () {
         if (loading) { return };
         let valid = true;
@@ -164,6 +185,9 @@
         })
 
         if (!valid) {return}
+
+        refinedProduct();
+        console.log($productSelected);
 
         loading = true;
         const res = await fetch('/api/products/'+$idToSearch, {
@@ -200,10 +224,36 @@
         }
         setTimeout(() => {
             resMessage = {type: "", content: ""}
-        }, 6000)
+        }, 5000)
+    }
+
+    async function deleteProduct () {
+        confirmDeleteVisible = false;
+        const res = await fetch('/api/products/'+$idToSearch, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Xsrf-Token': getCookies()['XSRF-TOKEN']
+            },
+            method: "DELETE",
+            credentials: "include"
+        })
+
+        if (res.status === 200) {
+            await requestFunctions.loadProducts();
+            clearInputs();
+            toogleModalViewProductVisible()
+        } else {
+            resMessage = {type: "error", content: "Error al guardar los cambios"}
+        }
+        setTimeout(() => {
+            resMessage = {type: "", content: ""}
+        }, 5000)
     }
 
     //
+
+
 
     onMount(getDefaultParams);
     onMount(async () => {
@@ -213,7 +263,8 @@
 </script>
 
 {#if visible}
-<button transition:blur class="fixed top-0 left-0 flex flex-col bg-blue-700/60 backdrop-blur w-full h-dvh" on:click={toogleModalViewProductVisible}>
+{!listVat.length || !listIce.length ? getDefaultParams() : ''}
+<button transition:blur class="fixed top-0 left-0 flex flex-col bg-blue-700/60 backdrop-blur w-full h-dvh" on:click={()=>{toogleModalViewProductVisible(); confirmDeleteVisible = false}}>
     <button class="m-auto flex flex-col w-[409px] place-items-center gap-2" on:click={(e)=>{e.stopPropagation()}}>
         <button class=" flex flex-col gap-5 p-6 border border-[--color-border] bg-slate-100/80 rounded-md hover:cursor-default" >
             <section>
@@ -271,7 +322,7 @@
                 </div>
                 {/if}
             </section>
-            <section class="flex flex-row gap-5 self-start text-slate-50">
+            <section class="flex flex-row gap-5 self-start text-slate-50 w-full">
                 <button class="h-[34px] bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600" on:click={saveUpdatedProduct}>
                     Guardar
                 </button>
@@ -281,9 +332,27 @@
                     </div>
                 {/if}
                 </div>
-                <button class="h-[34px] box-border border border-[--color-theme-1] text-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-slate-200" on:click={toogleModalViewProductVisible}>
+                <button class="h-[34px] box-border border border-[--color-theme-1] text-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-slate-200" on:click={()=>{toogleModalViewProductVisible(); confirmDeleteVisible = false}}>
                     Salir
                 </button>
+                <div class="ml-auto flex flex-row gap-1">
+                    <button class="h-[34px] box-border border border-[--color-theme-1] text-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-slate-200" on:click={toogleConfirmDeleteVisible}>
+                        {#if confirmDeleteVisible}
+                        <div in:scale>
+                            <Icon src={AiOutlineClose} size={20} />
+                        </div>
+                        {:else}    
+                        <div in:scale>
+                            <Icon src={BiTrash} size={20} />
+                        </div>
+                        {/if}
+                    </button>
+                    {#if confirmDeleteVisible}
+                    <button transition:slide={{axis: "x"}} class="h-[34px] box-border border border-red-500 text-red-500 py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-slate-200" on:click={deleteProduct}>
+                        Confirmar
+                    </button>                
+                    {/if}
+                </div>
             </section>
         </button>
         <button class="flex h-[42px] w-full max-w-full hover:cursor-default">

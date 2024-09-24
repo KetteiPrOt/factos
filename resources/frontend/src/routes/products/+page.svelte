@@ -69,9 +69,9 @@
 
 <div in:fade class="flex flex-col p-5 gap-5 w-fit max-w-full">
 	<h2 class="font-bold text-3xl text-center">Mis productos y servicios</h2>
-	<div class="flex flex-col gap-5">
+	<div class="flex flex-col gap-7">
 		<SectionSearch products={products} nameToSearch={nameToSearch} codeToSearch={codeToSearch} />
-		<SectionOptions toogleModalNewProductVisible={toogleModalNewProductVisible} />
+		<SectionOptions toogleModalNewProductVisible={toogleModalNewProductVisible} requestFunctions={requestFunctions} />
 		<SectionList products={products} requestFunctions={requestFunctions} toogleModalViewProductVisible={toogleModalViewProductVisible} productSelected={productSelected} idToSearch={idToSearch} />
 	</div>
 	<ModalNewProduct requestFunctions={requestFunctions} visible={modalNewProductVisible} toogleModalNewProductVisible={toogleModalNewProductVisible} />
