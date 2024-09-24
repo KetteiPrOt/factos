@@ -13,13 +13,11 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/login', [AuthController::class, 'login']);
 
-// Route::middleware(['auth:sanctum'])->controller(AuthController::class)->group(function (){
-Route::controller(AuthController::class)->group(function (){
+Route::middleware(['auth:sanctum'])->controller(AuthController::class)->group(function (){
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-// Route::middleware(['auth:sanctum'])->controller(ProductController::class)->group(function (){
-Route::controller(ProductController::class)->group(function (){
+Route::middleware(['auth:sanctum'])->controller(ProductController::class)->group(function (){
     Route::get('/products', 'index')->name('products.index');
     Route::post('/products', 'store')->name('products.store');
     Route::get('/products/{product}', 'show')->name('products.show');
@@ -28,7 +26,5 @@ Route::controller(ProductController::class)->group(function (){
     Route::delete('/products', 'destroyAll')->name('products.destroy-all');
 });
 
-// Route::middleware(['auth:sanctum'])->get('/vat-rates', [VatRateController::class, 'index']);
-// Route::middleware(['auth:sanctum'])->get('/ice-types', [IceTypeController::class, 'index']);
-Route::get('/vat-rates', [VatRateController::class, 'index']);
-Route::get('/ice-types', [IceTypeController::class, 'index']);
+Route::middleware(['auth:sanctum'])->get('/vat-rates', [VatRateController::class, 'index']);
+Route::middleware(['auth:sanctum'])->get('/ice-types', [IceTypeController::class, 'index']);
