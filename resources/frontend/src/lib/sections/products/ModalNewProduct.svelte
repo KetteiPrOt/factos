@@ -209,9 +209,9 @@
     //
 
     onMount(getDefaultParams);
-    onMount(async () => {
-        fetch('/sanctum/csrf-cookie', {headers: {'Accept': 'application/json'}, credentials: 'include'})
-    })
+    // onMount(async () => {
+    //     fetch('/sanctum/csrf-cookie', {headers: {'Accept': 'application/json'}, credentials: 'include'})
+    // })
 
 </script>
 
@@ -302,7 +302,7 @@
 {/if}
 
 
-<style lang="postcss">
+<style>
     .spinner {
         width: 25px;
         height: 25px;

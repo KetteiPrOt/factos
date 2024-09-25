@@ -40,6 +40,10 @@
         if (Array.isArray(data)) {
             $products = data
         }
+
+        if (res.status === 401) {
+            window.location.href = 'login';
+        }
     };
 
 	async function getProductById () {

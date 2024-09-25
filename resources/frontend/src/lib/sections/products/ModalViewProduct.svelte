@@ -256,9 +256,9 @@
 
 
     onMount(getDefaultParams);
-    onMount(async () => {
-        fetch('/sanctum/csrf-cookie', {headers: {'Accept': 'application/json'}, credentials: 'include'})
-    })
+    // onMount(async () => {
+    //     fetch('/sanctum/csrf-cookie', {headers: {'Accept': 'application/json'}, credentials: 'include'})
+    // })
 
 </script>
 

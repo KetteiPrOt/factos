@@ -35,6 +35,36 @@
         dropEmisVisible = !dropEmisVisible;
     }
 
+    async function logout () {
+        const res = await fetch('/api/logout', {
+            headers: {
+                'Accept': 'application/json',
+                'X-Xsrf-Token': getCookies()['XSRF-TOKEN'],
+                'Referer': window.location.href,
+                'Origin': window.location.origin
+            },
+            method: "POST",
+            credentials: "include"
+        })
+
+        if (res.status === 200) {
+            window.location.href = 'login';
+        }
+    }
+
+    function getCookies () {
+        let cookies = document.cookie.split(";");
+        let dict: {[key:string]: string} = {};
+        cookies.forEach(cookie => {
+            let [key, value] = cookie.split("=");
+            key = key.trim();
+            value = decodeURIComponent(value);
+            dict[key] = value;
+        })
+
+        return dict
+    }
+
 </script>
 
 <nav class="fixed top-0 w-full flex flex-row gap-4 bg-[--color-theme-1] text-slate-50 place-items-center p-4">
@@ -105,8 +135,8 @@
             Perfil
         </button>
         
-        <button class="bg-slate-50 text-[--color-theme-1] p-1.5 rounded-md hover:bg-slate-50/80">
-            Login
+        <button class="bg-slate-50 text-[--color-theme-1] p-1.5 rounded-md hover:bg-slate-50/80" on:click={logout}>
+            Logout
         </button>
         
     </div>
@@ -190,8 +220,8 @@
                 Perfil
             </button>
             
-            <button class="bg-slate-50 text-[--color-theme-1] p-1.5 rounded-md hover:bg-slate-50/80">
-                Login
+            <button class="bg-slate-50 text-[--color-theme-1] p-1.5 rounded-md hover:bg-slate-50/80" on:click={logout}>
+                Logout
             </button>
             
         </div>          
