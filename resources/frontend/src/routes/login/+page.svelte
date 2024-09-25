@@ -203,7 +203,7 @@
         align-self: center;
 
         border: 5px solid white;
-        border-top-color: blue;
+        border-top-color: var(--color-theme-1);
         border-radius: 100%;
 
         animation: spin 1s infinite;
