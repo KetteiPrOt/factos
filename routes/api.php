@@ -5,10 +5,11 @@ use App\Http\Controllers\Products\Controller as ProductController;
 use App\Http\Controllers\Products\IceTypeController;
 use App\Http\Controllers\Products\VatRateController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return Auth::user();
 })->middleware('auth:sanctum');
 
 Route::post('/login', [AuthController::class, 'login']);
