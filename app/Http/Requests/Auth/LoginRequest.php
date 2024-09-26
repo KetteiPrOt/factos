@@ -19,4 +19,12 @@ class LoginRequest extends FormRequest
             'remember_me' => 'sometimes|accepted'
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'password' => 'contraseña',
+            'remember_me' => 'recuerdame'
+        ];
+    }
 }

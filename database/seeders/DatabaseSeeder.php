@@ -22,6 +22,11 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
+        User::factory()->create([
+            'name' => 'Test User 2',
+            'email' => 'test_2@example.com',
+        ]);
+
         $this->call([
             VatRateSeeder::class,
             IceTypeSeeder::class,

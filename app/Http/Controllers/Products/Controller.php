@@ -24,7 +24,7 @@ class Controller extends BaseController
         )->join(
             'vat_rates', 'vat_rates.id', '=', 'products.vat_rate_id'
         )->where(
-            'products.user_id', Auth::user()?->id ?? 1
+            'products.user_id', Auth::user()->id
         )->where(
             'products.code', 'LIKE', '%'.($validated['code'] ?? null).'%'
         )->where(
@@ -38,13 +38,14 @@ class Controller extends BaseController
         $validated = $request->validated();
         $validated['tourism_vat_applies'] = isset($validated['tourism_vat_applies']);
         $validated['ice_applies'] = isset($validated['ice_applies']);
-        $validated['user_id'] = Auth::user()?->id ?? 1;
+        $validated['user_id'] = Auth::user()->id;
         Product::create($validated);
         return response(['message' => 'Guardado.'], 200);
     }
 
     public function show(Product $product)
     {
+        $this->authorizeProduct($product);
         return $product;
     }
 
@@ -58,20 +59,21 @@ class Controller extends BaseController
             $validated['ice_applies'] = false;
             $validated['ice_type_id'] = null;
         }
-        $validated['user_id'] = Auth::user()?->id ?? 1;
+        $validated['user_id'] = Auth::user()->id;
         $product->update($validated);
         return response(['message' => 'Actualizado.'], 200);
     }
 
     public function destroy(Product $product)
     {
+        $this->authorizeProduct($product);
         $product->delete();
         return response(['message' => 'Eliminado.'], 200);
     }
 
     public function destroyAll()
     {
-        $products = User::find(Auth::user()?->id ?? 1)->products;
+        $products = User::find(Auth::user()->id)->products;
         if($products->count() > 0){
             foreach($products as $product){
                 $product->delete();
@@ -79,5 +81,13 @@ class Controller extends BaseController
             return response(['message' => 'Eliminados.'], 200);
         }
         return response(['message' => 'No hay productos para eliminar.'], 200);
+    }
+
+    private function authorizeProduct(Product $product): void
+    {
+        $userProducts = User::find(Auth::user()->id)->products;
+        if( ! $userProducts->contains($product) ){
+            abort(403, message: 'This action is unauthorized.');
+        }
     }
 }

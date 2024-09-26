@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class UpdateRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        $userProducts = User::find(Auth::user()->id)->products;
+        return $userProducts->contains($this->route('product'));
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -18,7 +24,7 @@ class UpdateRequest extends FormRequest
     {
         $product_id = $this->route('product')->id;
         return [
-            'code' => ['required', 'string', 'max:25', new UniqueFor(User::find(Auth::user()?->id ?? 1), ignore: $product_id)],
+            'code' => ['required', 'string', 'max:25', new UniqueFor(User::find(Auth::user()->id), ignore: $product_id)],
             'name' => 'required|string|max:255',
             'price' => 'required|decimal:0,2|min:0.01|max:999999.99',
             'additional_info' => 'nullable|string|max:255',
