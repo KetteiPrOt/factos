@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\Products\IndexRequest;
 use App\Http\Requests\Products\StoreRequest;
 use App\Http\Requests\Products\UpdateRequest;
+use App\Http\Resources\Products\Index\Paginated;
+use App\Http\Resources\Products\Resource;
 use App\Models\Products\Model as Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -29,8 +31,8 @@ class Controller extends BaseController
             'products.code', 'LIKE', '%'.($validated['code'] ?? null).'%'
         )->where(
             'products.name', 'LIKE', '%'.($validated['name'] ?? null).'%'
-        )->orderBy('name')->get();
-        return $products;
+        )->orderBy('name')->paginate()->withQueryString();
+        return new Paginated($products);
     }
 
     public function store(StoreRequest $request)
@@ -46,7 +48,7 @@ class Controller extends BaseController
     public function show(Product $product)
     {
         $this->authorizeProduct($product);
-        return $product;
+        return new Resource($product);
     }
 
     public function update(UpdateRequest $request, Product $product)
