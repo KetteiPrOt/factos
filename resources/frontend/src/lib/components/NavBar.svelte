@@ -4,6 +4,7 @@
     import { slide, scale } from "svelte/transition";
 
     import { base } from "$app/paths";
+    import { goto } from "$app/navigation";
 
     //Visibility
     let lateralBarVisible = false;
@@ -48,7 +49,7 @@
         })
 
         if (res.status === 200) {
-            window.location.href = 'login';
+            goto('login')
         }
     }
 
@@ -111,7 +112,7 @@
                 <div transition:slide={{axis: "y"}} class="absolute top-[32px] w-full bg-slate-50/70 backdrop-blur rounded-b-md p-1 text-[--color-theme-1] font-medium text-center">
                     <ul>
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                            <a class="block" href="home" on:click={()=>closeAllDrops()}>
+                            <a class="block" href="invoices" on:click={()=>closeAllDrops()}>
                                 Factura
                             </a>
                         </li>
@@ -196,7 +197,7 @@
                     <div transition:slide={{axis: "y"}} class="absolute top-[32px] w-full bg-slate-50/70 backdrop-blur  rounded-b-md p-1 text-[--color-theme-1] font-medium text-center z-10">
                         <ul>
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                                <a class="block" href="home" on:click={closeLBarVisible}>
+                                <a class="block" href="invoices" on:click={closeLBarVisible}>
                                     Factura
                                 </a>
                             </li>

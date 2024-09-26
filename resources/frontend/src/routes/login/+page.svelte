@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import { fade, scale, slide } from "svelte/transition";
 
     let inputEmailElement: HTMLInputElement;
@@ -94,7 +95,7 @@
 
         loading = false;
         if (resLogin.status === 200) {
-            window.location.href = "home";
+            goto('home');
         } else if (resLogin.status === 401) {
             alertsInput.email = true;
             alertsInput.password = true;

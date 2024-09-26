@@ -4,14 +4,12 @@
 	import "@fontsource/chakra-petch";
 	import { base } from '$app/paths';
     import { onMount } from 'svelte';
+    import { page } from '$app/stores';
 
-	let showNavBar = false; 
-
-	onMount(()=>{
-		if (window.location.pathname != base+'/login') {
-			showNavBar = true;
-		}
-	})
+	$: actualRoute = $page.route.id;
+	$: showNavBar = actualRoute != '/login' ? true : false; 
+	console.log(actualRoute)
+	
 </script>
 
 <div class="app">
