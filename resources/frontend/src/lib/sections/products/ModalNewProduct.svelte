@@ -1,8 +1,10 @@
 <script lang="ts">
-    import type { Ice } from "$lib/interfaces/ice";
+    import Select from "$lib/components/Select.svelte";
+import type { Ice } from "$lib/interfaces/ice";
     import type { ProductPost } from "$lib/interfaces/product";
     import type { Vat } from "$lib/interfaces/vat";
     import { onMount } from "svelte";
+    import { writable } from "svelte/store";
 	import { blur, fade, slide } from "svelte/transition";
     
     export let requestFunctions: {
@@ -14,6 +16,9 @@
 
     let listVat: Vat[] = [];
     let listIce: Ice[] = [];
+
+    export const iceIdSelected = writable(0);
+    export const vatIdSelected = writable(0);
 
     let newProduct: ProductPost = {
         code: "",
@@ -93,17 +98,16 @@
         }
     }
 
-    function updateVatId (e: Event) {
-        const target = e.target as HTMLInputElement;
-        const value = parseInt(target.value);
-        newProduct.vat_rate_id = value;
+    // Updated VAT ID
+    $: {
+        newProduct.vat_rate_id = $vatIdSelected;
         alertsInput.vat_rate_id = false;
     }
 
-    function updateIceId (e: Event) {
-        const target = e.target as HTMLInputElement;
-        const value = parseInt(target.value);
-        newProduct.ice_type_id = value;
+    
+    // Update ICE ID
+    $: {
+        newProduct.ice_type_id = $iceIdSelected != 0 ? $iceIdSelected : undefined;
         alertsInput.ice_type_id = false;
         if (!newProduct.ice_type_id) {
             delete newProduct.ice_type_id;
@@ -117,11 +121,10 @@
         alertsInput.ice_type_id = false;
         if (newProduct.ice_applies === false) {
             delete newProduct.ice_applies;
-            if (newProduct.ice_type_id) {
-                delete newProduct.ice_type_id;
-            }
+            $iceIdSelected = 0
         }
     } 
+
 
     function toogleTourismIvaApplies (e: Event) {
         const target = e.target as HTMLInputElement;
@@ -136,7 +139,7 @@
         newProduct.code = '';
         newProduct.name = '';
         newProduct.price = 0;
-        newProduct.vat_rate_id = 0;
+        $vatIdSelected = 0;
         if ('additional_info' in newProduct) {
             delete newProduct.additional_info;
         }
@@ -146,9 +149,7 @@
         if ('ice_applies' in newProduct) {
             delete newProduct.ice_applies;
         }
-        if ('ice_type_id' in newProduct) {
-            delete newProduct.ice_type_id;
-        }
+        $iceIdSelected = 0
     }
 
     async function saveNewProduct () {
@@ -182,7 +183,6 @@
         })
 
         const data: {message: string} = await res.json();
-        console.log(data)
 
         loading = false;
 
@@ -209,9 +209,6 @@
     //
 
     onMount(getDefaultParams);
-    // onMount(async () => {
-    //     fetch('/sanctum/csrf-cookie', {headers: {'Accept': 'application/json'}, credentials: 'include'})
-    // })
 
 </script>
 
@@ -227,28 +224,23 @@
             <section class="flex flex-col gap-3">
                 <div class="flex flex-row gap-5">
                     <label for="code">Código:</label>
-                    <input name="code" class="border border-[--color-border] {alertsInput.code ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateCode(e)} value={newProduct.code}>
+                    <input name="code" class="border border-[--color-border] text-center {alertsInput.code ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateCode(e)} value={newProduct.code}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="name">Nombre:</label>
-                    <input name="name" class="border border-[--color-border] {alertsInput.name ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateName(e)} value={newProduct.name}>
+                    <input name="name" class="border border-[--color-border] text-center {alertsInput.name ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateName(e)} value={newProduct.name}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="price">Precio:</label>
-                    <input name="price" class="border border-[--color-border] {alertsInput.price ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={(e)=>updatePrice(e)} value={newProduct.price ? newProduct.price : ''}>
+                    <input name="price" class="border border-[--color-border] text-center {alertsInput.price ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={(e)=>updatePrice(e)} value={newProduct.price ? newProduct.price : ''}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="additional_info">Info. Adicional:</label>
-                    <input name="additional_info" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateInfoAdicional(e)} value={newProduct.additional_info ? newProduct.additional_info : ''}>
+                    <input name="additional_info" class="border border-[--color-border] text-center bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateInfoAdicional(e)} value={newProduct.additional_info ? newProduct.additional_info : ''}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="vat_rate_id">Tarifa IVA:</label>
-                    <select name="vat_rate_id" class="border border-[--color-border] {alertsInput.vat_rate_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={e=>updateVatId(e)} value={newProduct.vat_rate_id}>
-                        <option value=""></option>
-                        {#each listVat as vat}
-                            <option value={vat.id}>{vat.name}</option>
-                        {/each}
-                    </select>
+                    <Select options={listVat} optionSelected={vatIdSelected} alert={alertsInput.vat_rate_id} />
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="tourism_vat_applies">Aplicar IVA Turista:</label>
@@ -265,12 +257,7 @@
                 {#if newProduct?.ice_applies}
                 <div transition:slide={{duration: 200}} class="flex flex-row gap-5">
                     <label for="ice_type_id">Tipo ICE:</label>
-                    <select name="ice_type_id" class="border border-[--color-border] {alertsInput.ice_type_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={(e)=>updateIceId(e)} value={newProduct.ice_type_id ? newProduct.ice_type_id : ''}>
-                        <option value=""></option>
-                        {#each listIce as ice}
-                            <option value={ice.id}>{ice.name}</option>
-                        {/each}
-                    </select>
+                    <Select options={listIce} optionSelected={iceIdSelected} alert={alertsInput.ice_type_id}/>
                 </div>
                 {/if}
             </section>

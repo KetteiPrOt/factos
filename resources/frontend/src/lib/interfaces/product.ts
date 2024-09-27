@@ -16,5 +16,5 @@ export interface ProductPost extends Omit<Product, 'id' | 'vat_rate' | 'price'> 
 }
 
 export interface ProductGet extends ProductPost {
-   
+   new?: boolean
 }

@@ -60,6 +60,7 @@
             const product: ProductGet = await res.json()
     
             $productSelected = product;
+            $productSelected.new = true;
         }
 
     }

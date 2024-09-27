@@ -2,13 +2,10 @@
 	import '../app.css';
 	import NavBar from '../lib/components/NavBar.svelte';
 	import "@fontsource/chakra-petch";
-	import { base } from '$app/paths';
-    import { onMount } from 'svelte';
     import { page } from '$app/stores';
 
 	$: actualRoute = $page.route.id;
 	$: showNavBar = actualRoute != '/login' ? true : false; 
-	console.log(actualRoute)
 	
 </script>
 
