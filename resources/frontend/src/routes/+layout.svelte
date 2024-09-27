@@ -36,7 +36,7 @@
 	<NavBar />
 	{/if}
 
-	<main class="flex place-content-center max-w-full mt-[72px]">
+	<main class="flex place-content-center max-w-full mt-[72px] py-4 overflow-y-auto box-border" style="max-height: calc(100dvh - 72px)">
 		<slot />
 	</main>
 
@@ -45,5 +45,8 @@
 <style>
 	* {
 		font-family: 'Chakra Petch';
+	}
+	:global(body) {
+		overflow-y: hidden;
 	}
 </style>

@@ -11,7 +11,7 @@ import SectionOrigen from "$lib/sections/factura/SectionOrigen.svelte";
 	
 </script>
 
-<div in:fade class="flex flex-col p-5 gap-5 w-fit max-w-full ">
+<div in:fade class="flex flex-col p-5 gap-5 w-fit max-w-full h-full ">
     <h2 class="font-bold text-3xl text-center">Factura</h2>
     <div class="flex flex-col gap-7">
         <div class="flex flex-wrap gap-7 w-fit justify-center self-center">

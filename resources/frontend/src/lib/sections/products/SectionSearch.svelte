@@ -1,12 +1,17 @@
 <script lang="ts">
+    import type { Pagination } from "$lib/interfaces/pagination";
     import type { Product } from "$lib/interfaces/product";
 	import { Icon } from "svelte-icons-pack";
 	import { AiOutlineSearch } from "svelte-icons-pack/ai";
 	import type { Writable } from "svelte/store";
-
-    export let products: Writable<Product[]>;
+    
     export let nameToSearch: Writable<string>;
     export let codeToSearch: Writable<string>;
+
+    export let requestFunctions: {
+        loadProducts: (url: string | undefined) => Promise<void>;
+        getProductById: () => Promise<void>;
+    }
 
     function updateNameToSearch (e: Event) {
         const target = e.target as HTMLInputElement;
@@ -27,16 +32,8 @@
     }
 
     async function searchProducts () {
-        const res = await fetch(`/api/products?code=${$codeToSearch}&name=${$nameToSearch}`,
-            {
-                headers: {'Accept': 'application/json'}
-            }
-        );
-        $products = []
-        const data = await res.json();
-        if (Array.isArray(data)) {
-            $products = data
-        }
+        requestFunctions.loadProducts(`/api/products?code=${$codeToSearch}&name=${$nameToSearch}`)
+        
     }
 
 </script>

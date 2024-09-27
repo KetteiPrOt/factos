@@ -192,9 +192,6 @@
 </div>
 
 <style>
-    :global(body) {
-        overflow-y: hidden;
-    }
 
     .spinner {
         width: 25px;
