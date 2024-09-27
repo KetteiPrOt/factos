@@ -3,9 +3,31 @@
 	import NavBar from '../lib/components/NavBar.svelte';
 	import "@fontsource/chakra-petch";
     import { page } from '$app/stores';
+    import { goto } from '$app/navigation';
 
 	$: actualRoute = $page.route.id;
-	$: showNavBar = actualRoute != '/login' ? true : false; 
+	$: showNavBar = actualRoute != '/login' ? true : false;
+
+	async function checkUser () {
+		try {
+			const resUser = await fetch('/api/user');
+			const data = await resUser.json()
+	
+			if (resUser.status != 200) {
+				goto('login')
+			}
+		} catch (error) {
+			goto('login')
+		}
+	}
+
+	$: {
+		actualRoute;
+		if (typeof window != 'undefined') {
+			checkUser();
+
+		}
+	}
 	
 </script>
 
