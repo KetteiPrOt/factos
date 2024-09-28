@@ -68,7 +68,7 @@
 
 </script>
 
-<nav class="fixed z-50 top-0 w-full flex flex-row gap-4 bg-[--color-theme-1] text-slate-50 place-items-center p-4">
+<nav class="fixed z-40 top-0 w-full flex flex-row gap-4 bg-[--color-theme-1] text-slate-50 place-items-center p-4">
     <div>
         <a class=" font-semibold text-4xl" href="home" on:click={closeLBarVisible}>
             Factos

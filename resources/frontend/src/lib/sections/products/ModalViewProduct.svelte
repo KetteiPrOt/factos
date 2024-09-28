@@ -279,7 +279,7 @@ import type { Ice } from "$lib/interfaces/ice";
 
 {#if visible}
 {!listVat.length || !listIce.length ? getDefaultParams() : ''}
-<button transition:blur class="fixed top-0 left-0 flex flex-col bg-blue-700/60 backdrop-blur w-full h-dvh" on:click={()=>{toogleModalViewProductVisible(); confirmDeleteVisible = false}}>
+<button transition:blur class="fixed top-0 left-0 z-50 flex flex-col bg-blue-700/60 backdrop-blur w-full h-dvh" on:click={()=>{toogleModalViewProductVisible(); confirmDeleteVisible = false}}>
     <button class="m-auto flex flex-col w-[409px] place-items-center gap-2" on:click={(e)=>{e.stopPropagation()}}>
         <button class=" flex flex-col gap-5 p-6 border border-[--color-border] bg-slate-100/80 rounded-md hover:cursor-default" >
             <section>
