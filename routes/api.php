@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\Controller as AuthController;
 use App\Http\Controllers\Products\Controller as ProductController;
+use App\Http\Controllers\Establishments\Controller as EstablishmentController;
 use App\Http\Controllers\Products\IceTypeController;
 use App\Http\Controllers\Products\VatRateController;
 use Illuminate\Http\Request;
@@ -29,3 +30,11 @@ Route::middleware(['auth:sanctum'])->controller(ProductController::class)->group
 
 Route::middleware(['auth:sanctum'])->get('/vat-rates', [VatRateController::class, 'index']);
 Route::middleware(['auth:sanctum'])->get('/ice-types', [IceTypeController::class, 'index']);
+
+Route::middleware(['auth:sanctum'])->controller(EstablishmentController::class)->group(function (){
+    Route::get('/establishments', 'index')->name('establishments.index');
+    Route::post('/establishments', 'store')->name('establishments.store');
+    // Route::get('/establishments/{establishment}', 'show')->name('establishments.show');
+    // Route::put('/establishments/{establishment}', 'update')->name('establishments.update');
+    // Route::delete('/establishments/{establishment}', 'destroy')->name('establishments.destroy');
+});

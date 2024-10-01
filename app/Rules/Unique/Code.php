@@ -1,22 +1,27 @@
 <?php
 
-namespace App\Rules\Products;
+namespace App\Rules\Unique;
 
 use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use App\Models\Products\Model as Product;
 
-class UniqueFor implements ValidationRule
+class Code implements ValidationRule
 {
-    private User $user;
+    protected User $user;
 
-    private ?int $ignore;
+    /**
+     * The name of the relationship between the user and the model
+     */
+    protected string $relation;
 
-    public function __construct(User $user, ?int $ignore = null)
+    protected ?int $ignore;
+
+    public function __construct(User $user, string $relation, ?int $ignore = null)
     {
         $this->user = $user;
         $this->ignore = $ignore;
+        $this->relation = $relation;
     }
 
     /**
@@ -27,11 +32,11 @@ class UniqueFor implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $ignore_id = $this->ignore;
-        $not_unique = $this->user->products->contains(
-            function(Product $product, int $key) use ($value, $ignore_id) {
+        $not_unique = $this->user->{$this->relation}->contains(
+            function(object $model, int $key) use ($value, $ignore_id) {
                 return is_null($ignore_id)
-                    ? $product->code == $value
-                    : $product->code == $value && $product->id != $ignore_id;
+                    ? $model->code == $value
+                    : $model->code == $value && $model->id != $ignore_id;
             }
         );
         if($not_unique){

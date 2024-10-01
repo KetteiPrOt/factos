@@ -25,8 +25,8 @@ return new class extends Migration
             $table->foreign('receipt_type_id')
                   ->references('id')
                   ->on('receipt_types')
-                  ->onDelete('restrict')
-                  ->onUpdate('restrict');
+                  ->onDelete('cascade')
+                  ->onUpdate('cascade');
         });
     }
 

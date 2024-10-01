@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\Products\IndexRequest;
 use App\Http\Requests\Products\StoreRequest;
 use App\Http\Requests\Products\UpdateRequest;
-use App\Http\Resources\Products\Index\Paginated;
+use App\Http\Resources\Products\Indexes\Paginated;
 use App\Http\Resources\Products\Resource;
 use App\Models\Products\Model as Product;
 use App\Models\User;
