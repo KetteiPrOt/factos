@@ -51,16 +51,16 @@
     }
 
 </script>
-<div class="flex flex-col gap-4 justify-center border-t border-[--color-border] pt-7">
+<div class="flex flex-col gap-4 justify-center pt-7">
     <section class="flex flex-wrap gap-10 justify-center">
         <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50" on:click={toogleModalNewEstabVisible}>
             <Icon src={AiOutlinePlus} />
             <span>Nuevo</span>
         </button>
-        <div class="relative">
+        <!-- <div class="relative">
             <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50" on:click={showConfirmDelete}>
                 <Icon src={BiTrash} />
-                <span>Eliminar todos los productos</span>
+                <span>Eliminar todos los establecimientos</span>
             </button>
             {#if confirmDeleteVisible}
             <div transition:slide={{axis: "y"}} class="absolute mt-1 bg-blue-700/60 backdrop-blur-sm w-full flex flex-row gap-1 p-1 text-slate-50 rounded-md">
@@ -72,6 +72,6 @@
                 </button>
             </div>
             {/if}
-        </div>
+        </div> -->
     </section>
 </div>

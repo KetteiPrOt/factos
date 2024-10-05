@@ -1,9 +1,8 @@
 <script lang="ts">
 
     import { Icon } from "svelte-icons-pack";
-    import { AiFillAccountBook, AiFillCreditCard } from "svelte-icons-pack/ai";
-    import { BiCreditCard, BiCreditCardAlt, BiNote, BiSolidCreditCard, BiPackage, BiHome } from "svelte-icons-pack/bi";
-    import { BsBoxes } from "svelte-icons-pack/bs"
+    import { AiFillHome } from "svelte-icons-pack/ai";
+    import { BiSolidCreditCard, BiPackage } from "svelte-icons-pack/bi";
     import { fade } from "svelte/transition";
     import { goto } from "$app/navigation";
 
@@ -31,7 +30,7 @@
                 </span>
             </button>
             <button class="flex flex-col gap-1 place-items-center bg-[--color-theme-1] min-w-[180.5px] p-5 rounded-md shadow-sm text-slate-50 shadow-black hover:shadow hover:shadow-black hover:bg-blue-600" on:click={()=>goto('establishments')}>
-                <Icon src={BiHome} size={65}/>
+                <Icon src={AiFillHome} size={65}/>
                 <span class=" text-3xl">
                     Establecimientos
                 </span>

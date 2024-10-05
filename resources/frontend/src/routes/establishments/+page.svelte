@@ -64,9 +64,11 @@
         })
 
         if (res.status === 200) {
-            const estab: EstablishmentsGet = await res.json()
+            const estab: Establishments = await res.json()
     
-            $estabSelected = estab;
+            $estabSelected.code = parseInt(estab.code);
+            $estabSelected.address = estab.address;
+            $estabSelected.commercial_name = estab.commercial_name;
             $estabSelected.new = true;
         }
 
@@ -82,7 +84,7 @@
 <div in:fade class="flex flex-col p-5 gap-5 w-fit h-full max-w-full">
 	<h2 class="font-bold text-3xl text-center">Mis Establecimientos</h2>
 	<div class="flex flex-col gap-7">
-		<SectionSearch nameToSearch={nameToSearch} codeToSearch={codeToSearch} requestFunctions={requestFunctions} />
+		<!-- <SectionSearch nameToSearch={nameToSearch} codeToSearch={codeToSearch} requestFunctions={requestFunctions} /> -->
 		<SectionOptions toogleModalNewEstabVisible={toogleModalNewEstabVisible} requestFunctions={requestFunctions} />
 		<SectionList establishments={establishments} requestFunctions={requestFunctions} toogleModalViewEstabVisible={toogleModalViewEstabVisible} estabSelected={estabSelected} idToSearch={idToSearch} />
 	</div>

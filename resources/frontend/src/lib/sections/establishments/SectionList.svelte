@@ -123,10 +123,10 @@
             <Icon src={AiFillFastForward} size={20}/>
         </button>
     </div> -->
-    <button class="flex flex-row gap-2 text-[--color-theme-1] mt-2 px-3 py-1 rounded-md border border-transparent hover:border-[--color-theme-1] hover:bg-slate-200">
+    <!-- <button class="flex flex-row gap-2 text-[--color-theme-1] mt-2 px-3 py-1 rounded-md border border-transparent hover:border-[--color-theme-1] hover:bg-slate-200">
         <Icon src={BiDownload} size={20}/>
         <span>Descargar reporte</span>
-    </button>
+    </button> -->
 </section>
 
 <style>
