@@ -9,7 +9,6 @@ use App\Http\Requests\Products\UpdateRequest;
 use App\Http\Resources\Products\Indexes\Paginated;
 use App\Http\Resources\Products\Resource;
 use App\Models\Products\Model as Product;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class Controller extends BaseController
@@ -75,7 +74,7 @@ class Controller extends BaseController
 
     public function destroyAll()
     {
-        $products = User::find(Auth::user()->id)->products;
+        $products = Auth::user()->products;
         if($products->count() > 0){
             foreach($products as $product){
                 $product->delete();
@@ -87,7 +86,7 @@ class Controller extends BaseController
 
     private function authorizeProduct(Product $product): void
     {
-        $userProducts = User::find(Auth::user()->id)->products;
+        $userProducts = Auth::user()->products;
         if( ! $userProducts->contains($product) ){
             abort(403, message: 'This action is unauthorized.');
         }

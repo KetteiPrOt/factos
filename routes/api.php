@@ -34,7 +34,7 @@ Route::middleware(['auth:sanctum'])->get('/ice-types', [IceTypeController::class
 Route::middleware(['auth:sanctum'])->controller(EstablishmentController::class)->group(function (){
     Route::get('/establishments', 'index')->name('establishments.index');
     Route::post('/establishments', 'store')->name('establishments.store');
-    // Route::get('/establishments/{establishment}', 'show')->name('establishments.show');
-    // Route::put('/establishments/{establishment}', 'update')->name('establishments.update');
-    // Route::delete('/establishments/{establishment}', 'destroy')->name('establishments.destroy');
+    Route::get('/establishments/{establishment}', 'show')->name('establishments.show');
+    Route::put('/establishments/{establishment}', 'update')->name('establishments.update');
+    Route::delete('/establishments/{establishment}', 'destroy')->name('establishments.destroy');
 });
