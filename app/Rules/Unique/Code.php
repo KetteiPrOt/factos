@@ -2,24 +2,29 @@
 
 namespace App\Rules\Unique;
 
-use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class Code implements ValidationRule
 {
-    protected User $user;
+    /**
+     * The parent model
+     */
+    protected object $model;
 
     /**
-     * The name of the relationship between the user and the model
+     * The name of the relationship between the parent model and the child models
      */
     protected string $relation;
 
+    /**
+     * Child model's id that will be ignored
+     */
     protected ?int $ignore;
 
-    public function __construct(User $user, string $relation, ?int $ignore = null)
+    public function __construct(object $model, string $relation, ?int $ignore = null)
     {
-        $this->user = $user;
+        $this->model = $model;
         $this->ignore = $ignore;
         $this->relation = $relation;
     }
@@ -32,7 +37,7 @@ class Code implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $ignore_id = $this->ignore;
-        $not_unique = $this->user->{$this->relation}->contains(
+        $not_unique = $this->model->{$this->relation}->contains(
             function(object $model, int $key) use ($value, $ignore_id) {
                 return is_null($ignore_id)
                     ? $model->code == $value
