@@ -95,6 +95,11 @@
                             </a>
                         </li>
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                            <a class="block" href="establishments" on:click={()=>closeAllDrops()}>
+                                Establecimientos
+                            </a>
+                        </li>
+                        <li class="border-b border-transparent hover:border-[--color-theme-1]">
                             <button class="block w-full">
                                 Puntos de emisión
                             </button>
@@ -177,6 +182,11 @@
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
                                 <a class="block" href="products" on:click={closeLBarVisible}>
                                     Productos y servicios
+                                </a>
+                            </li>
+                            <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                                <a class="block" href="establishments" on:click={closeLBarVisible}>
+                                    Establecimientos
                                 </a>
                             </li>
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
