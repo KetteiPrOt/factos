@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Receipts\TypeController as ReceiptTypeController;
 use App\Http\Controllers\Auth\Controller as AuthController;
 use App\Http\Controllers\Products\Controller as ProductController;
 use App\Http\Controllers\Establishments\Controller as EstablishmentController;
@@ -39,6 +40,8 @@ Route::middleware(['auth:sanctum'])->controller(EstablishmentController::class)-
     Route::put('/establishments/{establishment}', 'update')->name('establishments.update');
     Route::delete('/establishments/{establishment}', 'destroy')->name('establishments.destroy');
 });
+
+Route::middleware(['auth:sanctum'])->get('/receipt-types', [ReceiptTypeController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->controller(IssuancePointController::class)->group(function (){
     Route::get('/issuance-points/{establishment}', 'index')->name('issuance-points.index');
