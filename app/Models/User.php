@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Products\Model as Product;
 use App\Models\Establishments\Model as Establishment;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -56,5 +57,13 @@ class User extends Authenticatable
     public function establishments(): HasMany
     {
         return $this->hasMany(Establishment::class);
+    }
+
+    public function checkModelBelongsToMe(object $model, string $relationship): void
+    {
+        $userModels = Auth::user()->{$relationship};
+        if( ! $userModels->contains($model) ){
+            abort(403, message: 'This action is unauthorized.');
+        }
     }
 }

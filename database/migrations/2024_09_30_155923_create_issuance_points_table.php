@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('issuance_points', function (Blueprint $table) {
             $table->id();
             $table->char('code', 3);
-            $table->string('description', 255);
+            $table->string('description', 255)->nullable();
             $table->boolean('active')->default(true);
             // Foreign keys
             $table->unsignedBigInteger('establishment_id');

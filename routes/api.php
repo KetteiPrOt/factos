@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\Controller as AuthController;
 use App\Http\Controllers\Products\Controller as ProductController;
 use App\Http\Controllers\Establishments\Controller as EstablishmentController;
+use App\Http\Controllers\Establishments\IssuancePointController;
 use App\Http\Controllers\Products\IceTypeController;
 use App\Http\Controllers\Products\VatRateController;
 use Illuminate\Http\Request;
@@ -37,4 +38,12 @@ Route::middleware(['auth:sanctum'])->controller(EstablishmentController::class)-
     Route::get('/establishments/{establishment}', 'show')->name('establishments.show');
     Route::put('/establishments/{establishment}', 'update')->name('establishments.update');
     Route::delete('/establishments/{establishment}', 'destroy')->name('establishments.destroy');
+});
+
+Route::middleware(['auth:sanctum'])->controller(IssuancePointController::class)->group(function (){
+    Route::get('/issuance-points/{establishment}', 'index')->name('issuance-points.index');
+    // Route::post('/issuance-points', 'store')->name('issuance-points.store');
+    // Route::get('/issuance-points/{issuancePoint}', 'show')->name('issuance-points.show');
+    // Route::put('/issuance-points/{issuancePoint}', 'update')->name('issuance-points.update');
+    // Route::delete('/issuance-points/{issuancePoint}', 'destroy')->name('issuance-points.destroy');
 });

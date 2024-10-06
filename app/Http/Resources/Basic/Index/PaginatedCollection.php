@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Collection\Index;
+namespace App\Http\Resources\Basic\Index;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class BasicPaginated extends ResourceCollection
+class PaginatedCollection extends ResourceCollection
 {
     /**
      * Customize the pagination information for the resource.
@@ -22,5 +23,15 @@ class BasicPaginated extends ResourceCollection
         unset($default['meta']['path']);
         unset($default['meta']['per_page']);
         return $default;
+    }
+
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return parent::toArray($request);
     }
 }

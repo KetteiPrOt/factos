@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\Products\IndexRequest;
 use App\Http\Requests\Products\StoreRequest;
 use App\Http\Requests\Products\UpdateRequest;
-use App\Http\Resources\Products\Indexes\Paginated;
+use App\Http\Resources\Basic\Index\PaginatedCollection;
 use App\Http\Resources\Products\Resource;
 use App\Models\Products\Model as Product;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +31,7 @@ class Controller extends BaseController
         )->where(
             'products.name', 'LIKE', '%'.($validated['name'] ?? null).'%'
         )->orderBy('name')->paginate()->withQueryString();
-        return new Paginated($products);
+        return new PaginatedCollection($products);
     }
 
     public function store(StoreRequest $request)
@@ -46,7 +46,7 @@ class Controller extends BaseController
 
     public function show(Product $product)
     {
-        $this->authorizeProduct($product);
+        $this->authUser()->checkModelBelongsToMe($product, relationship: 'products');
         return new Resource($product);
     }
 
@@ -67,7 +67,7 @@ class Controller extends BaseController
 
     public function destroy(Product $product)
     {
-        $this->authorizeProduct($product);
+        $this->authUser()->checkModelBelongsToMe($product, relationship: 'products');
         $product->delete();
         return response(['message' => 'Eliminado.'], 200);
     }
@@ -82,13 +82,5 @@ class Controller extends BaseController
             return response(['message' => 'Eliminados.'], 200);
         }
         return response(['message' => 'No hay productos para eliminar.'], 200);
-    }
-
-    private function authorizeProduct(Product $product): void
-    {
-        $userProducts = Auth::user()->products;
-        if( ! $userProducts->contains($product) ){
-            abort(403, message: 'This action is unauthorized.');
-        }
     }
 }
