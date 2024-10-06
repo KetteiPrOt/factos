@@ -3,7 +3,7 @@
 namespace App\Models\Establishments;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel as Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Establishments\Model as Establishment;
 use Illuminate\Database\Eloquent\Relations\HasMany;

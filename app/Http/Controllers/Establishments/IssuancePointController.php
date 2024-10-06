@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Establishments;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Establishments\IssuancePoint\StoreRequest;
-use App\Models\Establishments\Model as Establishment;
 use App\Http\Resources\Establishments\IssuancePoints\Index\PaginatedCollection;
+use App\Http\Resources\Establishments\IssuancePoints\ShowResource as Resource;
+use App\Models\Establishments\Model as Establishment;
 use App\Models\Establishments\IssuancePoint;
 use App\Models\Establishments\Sequential;
 use App\Models\Receipts\Type as ReceiptType;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class IssuancePointController extends Controller
 {
@@ -40,5 +43,15 @@ class IssuancePointController extends Controller
                 'receipt_type_id' => $receiptType->id
             ]);
         }
+    }
+
+    public function show(IssuancePoint $issuancePoint)
+    {
+        $user = User::find(Auth::user()->id);
+        $user->checkModelBelongsToMe(
+            $issuancePoint->establishment,
+            relationship: 'establishments'
+        );
+        return new Resource($issuancePoint);
     }
 }

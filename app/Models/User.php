@@ -5,13 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Products\Model as Product;
 use App\Models\Establishments\Model as Establishment;
-use Illuminate\Support\Facades\Auth;
 
-class User extends Authenticatable
+class User extends AuthenticatableUser
 {
     use HasFactory, Notifiable;
 

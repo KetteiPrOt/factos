@@ -6,7 +6,7 @@ use App\Models\User;
 use Database\Factories\Products\Factory as ProductFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model as BaseModel;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Model extends BaseModel

@@ -3,7 +3,7 @@
 namespace App\Models\Receipts;
 
 use App\Models\Establishments\Sequential;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel as Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Type extends Model
