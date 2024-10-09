@@ -5,11 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Products\Model as Product;
+use App\Models\Establishments\Model as Establishment;
 
-class User extends Authenticatable
+class User extends AuthenticatableUser
 {
     use HasFactory, Notifiable;
 
@@ -50,5 +50,20 @@ class User extends Authenticatable
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function establishments(): HasMany
+    {
+        return $this->hasMany(Establishment::class);
+    }
+
+    public function checkModelBelongsToMe(object $model, string $relationship, bool $abort = true): bool
+    {
+        $userModels = $this->{$relationship};
+        if( ! $userModels->contains($model) ){
+            if($abort) abort(403, message: 'This action is unauthorized.');
+            return false;
+        }
+        return true;
     }
 }

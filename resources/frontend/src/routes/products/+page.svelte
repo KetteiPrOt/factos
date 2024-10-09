@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { Pagination } from '$lib/interfaces/pagination';
     import type { Product, ProductGet } from '$lib/interfaces/product';
 	import ModalNewProduct from '$lib/sections/products/ModalNewProduct.svelte';
     import ModalViewProduct from '$lib/sections/products/ModalViewProduct.svelte';
@@ -16,6 +17,8 @@
 	export const codeToSearch = writable("");
 	export const products: Writable<Product[]> = writable([]);
 
+    export const paginationData: Writable<Pagination> = writable();
+
 	export const idToSearch = writable("");
 	export const productSelected: Writable<ProductGet> = writable({ code: "", name: "", price: 0, vat_rate_id: 0 });
 
@@ -28,18 +31,20 @@
     }
 
 	//REQUEST FUNCTIONS
-	async function loadProducts () {
-        const res = await fetch('/api/products',
+	async function loadProducts (url: string | undefined = '/api/products?page=1') {
+        const res = await fetch(url,
             {
                 headers: {'Accept': 'application/json'}
             }
         );
         
         $products = []
-        const data = await res.json();
-        if (Array.isArray(data)) {
-            $products = data
+        const data: Pagination = await res.json();
+        paginationData.set(data)
+        if (Array.isArray(data.data)) {
+            $products = data.data
         }
+        //console.log(data.data)
 
         if (res.status === 401) {
             window.location.href = 'login';
@@ -60,6 +65,7 @@
             const product: ProductGet = await res.json()
     
             $productSelected = product;
+            $productSelected.new = true;
         }
 
     }
@@ -71,12 +77,12 @@
 
 </script>
 
-<div in:fade class="flex flex-col p-5 gap-5 w-fit max-w-full">
+<div in:fade class="flex flex-col p-5 gap-5 w-fit h-full max-w-full">
 	<h2 class="font-bold text-3xl text-center">Mis productos y servicios</h2>
 	<div class="flex flex-col gap-7">
-		<SectionSearch products={products} nameToSearch={nameToSearch} codeToSearch={codeToSearch} />
+		<SectionSearch nameToSearch={nameToSearch} codeToSearch={codeToSearch} requestFunctions={requestFunctions} />
 		<SectionOptions toogleModalNewProductVisible={toogleModalNewProductVisible} requestFunctions={requestFunctions} />
-		<SectionList products={products} requestFunctions={requestFunctions} toogleModalViewProductVisible={toogleModalViewProductVisible} productSelected={productSelected} idToSearch={idToSearch} />
+		<SectionList products={products} requestFunctions={requestFunctions} toogleModalViewProductVisible={toogleModalViewProductVisible} productSelected={productSelected} idToSearch={idToSearch} paginationData={paginationData} />
 	</div>
 	<ModalNewProduct requestFunctions={requestFunctions} visible={modalNewProductVisible} toogleModalNewProductVisible={toogleModalNewProductVisible} />
 	<ModalViewProduct requestFunctions={requestFunctions} visible={modalViewProductVisible} toogleModalViewProductVisible={toogleModalViewProductVisible} productSelected={productSelected} idToSearch={idToSearch} />

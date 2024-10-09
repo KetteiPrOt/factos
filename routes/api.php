@@ -1,14 +1,18 @@
 <?php
 
+use App\Http\Controllers\Receipts\TypeController as ReceiptTypeController;
 use App\Http\Controllers\Auth\Controller as AuthController;
 use App\Http\Controllers\Products\Controller as ProductController;
+use App\Http\Controllers\Establishments\Controller as EstablishmentController;
+use App\Http\Controllers\Establishments\IssuancePointController;
 use App\Http\Controllers\Products\IceTypeController;
 use App\Http\Controllers\Products\VatRateController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return Auth::user();
 })->middleware('auth:sanctum');
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -28,3 +32,21 @@ Route::middleware(['auth:sanctum'])->controller(ProductController::class)->group
 
 Route::middleware(['auth:sanctum'])->get('/vat-rates', [VatRateController::class, 'index']);
 Route::middleware(['auth:sanctum'])->get('/ice-types', [IceTypeController::class, 'index']);
+
+Route::middleware(['auth:sanctum'])->controller(EstablishmentController::class)->group(function (){
+    Route::get('/establishments', 'index')->name('establishments.index');
+    Route::post('/establishments', 'store')->name('establishments.store');
+    Route::get('/establishments/{establishment}', 'show')->name('establishments.show');
+    Route::put('/establishments/{establishment}', 'update')->name('establishments.update');
+    Route::delete('/establishments/{establishment}', 'destroy')->name('establishments.destroy');
+});
+
+Route::middleware(['auth:sanctum'])->get('/receipt-types', [ReceiptTypeController::class, 'index']);
+
+Route::middleware(['auth:sanctum'])->controller(IssuancePointController::class)->group(function (){
+    Route::get('/issuance-points/{establishment}', 'index')->name('issuance-points.index');
+    Route::post('/issuance-points/{establishment}', 'store')->name('issuance-points.store');
+    Route::get('/issuance-points/show/{issuancePoint}', 'show')->name('issuance-points.show');
+    Route::put('/issuance-points/{issuancePoint}', 'update')->name('issuance-points.update');
+    // Route::delete('/issuance-points/{issuancePoint}', 'destroy')->name('issuance-points.destroy');
+});

@@ -2,7 +2,7 @@
 
 namespace App\Models\Products;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel as Model;
 
 class VatRate extends Model
 {

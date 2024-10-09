@@ -1,12 +1,13 @@
 <script lang="ts">
-    import type { Ice } from "$lib/interfaces/ice";
+    import Select from "$lib/components/Select.svelte";
+import type { Ice } from "$lib/interfaces/ice";
     import type { ProductGet, ProductPost } from "$lib/interfaces/product";
     import type { Vat } from "$lib/interfaces/vat";
     import { onMount } from "svelte";
     import { Icon } from "svelte-icons-pack";
     import { AiOutlineClose } from "svelte-icons-pack/ai";
     import { BiTrash } from "svelte-icons-pack/bi";
-    import type { Writable } from "svelte/store";
+    import { get, writable, type Writable } from "svelte/store";
 	import { blur, fade, scale, slide } from "svelte/transition";
     
     export let requestFunctions: {
@@ -20,6 +21,9 @@
 
     let listVat: Vat[] = [];
     let listIce: Ice[] = [];
+
+    let iceIdSelected = writable(0);
+    let vatIdSelected = writable(0);
 
     let alertsInput = {
         code: false,
@@ -98,22 +102,44 @@
         }
     }
 
-    function updateVatId (e: Event) {
-        const target = e.target as HTMLInputElement;
-        const value = parseInt(target.value);
-        $productSelected.vat_rate_id = value;
+    // Update VAT ID
+    $: {
+        if ($productSelected?.new) {
+            vatIdSelected.set(get(productSelected).vat_rate_id)
+            
+        }
+        $productSelected.vat_rate_id = $vatIdSelected;
         alertsInput.vat_rate_id = false;
     }
 
-    function updateIceId (e: Event) {
-        const target = e.target as HTMLInputElement;
-        const value = parseInt(target.value);
-        $productSelected.ice_type_id = value;
+    // Update ICE ID
+    $: {
+        if ($productSelected?.new) {
+            let initIceId = get(productSelected).ice_type_id
+            if (typeof initIceId != 'undefined') {
+                iceIdSelected.set(initIceId)
+            } else {
+                iceIdSelected.set(0)
+            }
+            delete $productSelected.new
+        }
+        
+        $productSelected.ice_type_id = $iceIdSelected;
         alertsInput.ice_type_id = false;
         if (!$productSelected.ice_type_id) {
             delete $productSelected.ice_type_id;
         }
     }
+
+    // function updateIceId (e: Event) {
+    //     const target = e.target as HTMLInputElement;
+    //     const value = parseInt(target.value);
+    //     $productSelected.ice_type_id = value;
+    //     alertsInput.ice_type_id = false;
+    //     if (!$productSelected.ice_type_id) {
+    //         delete $productSelected.ice_type_id;
+    //     }
+    // }
 
     function toogleIceApplies (e: Event) {
         const target = e.target as HTMLInputElement;
@@ -122,10 +148,7 @@
         alertsInput.ice_type_id = false;
         if ($productSelected.ice_applies === false) {
             $productSelected.ice_applies = undefined;
-            if ($productSelected.ice_type_id) {
-                delete $productSelected.ice_type_id;
-                console.log($productSelected)
-            }
+            $iceIdSelected = 0;
         }
     } 
 
@@ -137,14 +160,13 @@
         } else {
             $productSelected.tourism_vat_applies = true
         }
-        console.log($productSelected);
     } 
 
     function clearInputs () {
         $productSelected.code = '';
         $productSelected.name = '';
         $productSelected.price = 0;
-        $productSelected.vat_rate_id = 0;
+        $vatIdSelected = 0;
         if ('additional_info' in $productSelected) {
             delete $productSelected.additional_info;
         }
@@ -154,9 +176,7 @@
         if ('ice_applies' in $productSelected) {
             delete $productSelected.ice_applies;
         }
-        if ('ice_type_id' in $productSelected) {
-            delete $productSelected.ice_type_id;
-        }
+        $iceIdSelected = 0;
     }
 
     function refinedProduct () {
@@ -187,7 +207,6 @@
         if (!valid) {return}
 
         refinedProduct();
-        console.log($productSelected);
 
         loading = true;
         const res = await fetch('/api/products/'+$idToSearch, {
@@ -202,7 +221,6 @@
         })
 
         const data: {message: string} = await res.json();
-        console.log(data)
 
         loading = false;
 
@@ -256,15 +274,12 @@
 
 
     onMount(getDefaultParams);
-    // onMount(async () => {
-    //     fetch('/sanctum/csrf-cookie', {headers: {'Accept': 'application/json'}, credentials: 'include'})
-    // })
 
 </script>
 
 {#if visible}
 {!listVat.length || !listIce.length ? getDefaultParams() : ''}
-<button transition:blur class="fixed top-0 left-0 flex flex-col bg-blue-700/60 backdrop-blur w-full h-dvh" on:click={()=>{toogleModalViewProductVisible(); confirmDeleteVisible = false}}>
+<button transition:blur class="fixed top-0 left-0 z-50 flex flex-col bg-blue-700/60 backdrop-blur w-full h-dvh" on:click={()=>{toogleModalViewProductVisible(); confirmDeleteVisible = false}}>
     <button class="m-auto flex flex-col w-[409px] place-items-center gap-2" on:click={(e)=>{e.stopPropagation()}}>
         <button class=" flex flex-col gap-5 p-6 border border-[--color-border] bg-slate-100/80 rounded-md hover:cursor-default" >
             <section>
@@ -275,28 +290,29 @@
             <section class="flex flex-col gap-3">
                 <div class="flex flex-row gap-5">
                     <label for="code">Código:</label>
-                    <input name="code" class="border border-[--color-border] {alertsInput.code ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateCode(e)} value={$productSelected.code}>
+                    <input name="code" class="border border-[--color-border] text-center {alertsInput.code ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateCode(e)} value={$productSelected.code}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="name">Nombre:</label>
-                    <input name="name" class="border border-[--color-border] {alertsInput.name ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateName(e)} value={$productSelected.name}>
+                    <input name="name" class="border border-[--color-border] text-center {alertsInput.name ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateName(e)} value={$productSelected.name}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="price">Precio:</label>
-                    <input name="price" class="border border-[--color-border] {alertsInput.price ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={(e)=>updatePrice(e)} value={$productSelected.price ? $productSelected.price : ''}>
+                    <input name="price" class="border border-[--color-border] text-center {alertsInput.price ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={(e)=>updatePrice(e)} value={$productSelected.price ? $productSelected.price : ''}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="additional_info">Info. Adicional:</label>
-                    <input name="additional_info" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateInfoAdicional(e)} value={$productSelected.additional_info ? $productSelected.additional_info : ''}>
+                    <input name="additional_info" class="border border-[--color-border] text-center bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="text" on:input={(e)=>updateInfoAdicional(e)} value={$productSelected.additional_info ? $productSelected.additional_info : ''}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="vat_rate_id">Tarifa IVA:</label>
-                    <select name="vat_rate_id" class="border border-[--color-border] {alertsInput.vat_rate_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={e=>updateVatId(e)} value={$productSelected.vat_rate_id}>
+                    <Select options={listVat} optionSelected={vatIdSelected} alert={alertsInput.vat_rate_id} />
+                    <!-- <select name="vat_rate_id" class="border border-[--color-border] {alertsInput.vat_rate_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={e=>updateVatId(e)} value={$productSelected.vat_rate_id}>
                         <option value=""></option>
                         {#each listVat as vat}
                             <option value={vat.id}>{vat.name}</option>
                         {/each}
-                    </select>
+                    </select> -->
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="tourism_vat_applies">Aplicar IVA Turista:</label>
@@ -313,12 +329,14 @@
                 {#if $productSelected?.ice_applies}
                 <div transition:slide={{duration: 200}} class="flex flex-row gap-5">
                     <label for="ice_type_id">Tipo ICE:</label>
-                    <select name="ice_type_id" class="border border-[--color-border] {alertsInput.ice_type_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={(e)=>updateIceId(e)} value={$productSelected.ice_type_id ? $productSelected.ice_type_id : ''}>
+                    <Select options={listIce} optionSelected={iceIdSelected} alert={alertsInput.ice_type_id} />
+                    <!-- <select name="ice_type_id" class="border border-[--color-border] {alertsInput.ice_type_id ? 'border-red-500' : ''} bg-transparent rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center outline-none" on:change={(e)=>updateIceId(e)} value={$productSelected.ice_type_id ? $productSelected.ice_type_id : ''}>
+
                         <option value=""></option>
                         {#each listIce as ice}
                             <option value={ice.id}>{ice.name}</option>
                         {/each}
-                    </select>
+                    </select> -->
                 </div>
                 {/if}
             </section>

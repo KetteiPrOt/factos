@@ -7,6 +7,8 @@ use Database\Seeders\Products\IceTypeSeeder;
 use Database\Seeders\Products\VatRateSeeder;
 use Database\Seeders\Products\Seeder as ProductSeeder;
 use Illuminate\Database\Seeder;
+use Database\Seeders\Receipt\Type as RecieptTypeSeeder;
+use Database\Seeders\Establishments\Seeder as EstablishmentSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,8 +17,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -30,7 +30,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             VatRateSeeder::class,
             IceTypeSeeder::class,
-            ProductSeeder::class
+            ProductSeeder::class,
+            RecieptTypeSeeder::class,
+            EstablishmentSeeder::class
         ]);
     }
 }

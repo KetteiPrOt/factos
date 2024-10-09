@@ -2,13 +2,32 @@
 	import '../app.css';
 	import NavBar from '../lib/components/NavBar.svelte';
 	import "@fontsource/chakra-petch";
-	import { base } from '$app/paths';
-    import { onMount } from 'svelte';
     import { page } from '$app/stores';
+    import { goto } from '$app/navigation';
 
 	$: actualRoute = $page.route.id;
-	$: showNavBar = actualRoute != '/login' ? true : false; 
-	console.log(actualRoute)
+	$: showNavBar = actualRoute != '/login' ? true : false;
+
+	async function checkUser () {
+		try {
+			const resUser = await fetch('/api/user');
+			const data = await resUser.json()
+	
+			if (resUser.status != 200) {
+				goto('login')
+			}
+		} catch (error) {
+			goto('login')
+		}
+	}
+
+	$: {
+		actualRoute;
+		if (typeof window != 'undefined') {
+			checkUser();
+
+		}
+	}
 	
 </script>
 
@@ -17,7 +36,7 @@
 	<NavBar />
 	{/if}
 
-	<main class="flex place-content-center max-w-full mt-[72px]">
+	<main class="flex place-content-center max-w-full mt-[72px] py-4 overflow-y-auto box-border" style="max-height: calc(100dvh - 72px)">
 		<slot />
 	</main>
 
@@ -26,5 +45,8 @@
 <style>
 	* {
 		font-family: 'Chakra Petch';
+	}
+	:global(body) {
+		overflow-y: hidden;
 	}
 </style>

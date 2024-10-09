@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\Products\IndexRequest;
 use App\Http\Requests\Products\StoreRequest;
 use App\Http\Requests\Products\UpdateRequest;
+use App\Http\Resources\Basic\Index\PaginatedCollection;
+use App\Http\Resources\Products\Resource;
 use App\Models\Products\Model as Product;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class Controller extends BaseController
@@ -29,8 +30,8 @@ class Controller extends BaseController
             'products.code', 'LIKE', '%'.($validated['code'] ?? null).'%'
         )->where(
             'products.name', 'LIKE', '%'.($validated['name'] ?? null).'%'
-        )->orderBy('name')->get();
-        return $products;
+        )->orderBy('name')->paginate()->withQueryString();
+        return new PaginatedCollection($products);
     }
 
     public function store(StoreRequest $request)
@@ -45,8 +46,8 @@ class Controller extends BaseController
 
     public function show(Product $product)
     {
-        $this->authorizeProduct($product);
-        return $product;
+        $this->authUser()->checkModelBelongsToMe($product, relationship: 'products');
+        return new Resource($product);
     }
 
     public function update(UpdateRequest $request, Product $product)
@@ -66,14 +67,14 @@ class Controller extends BaseController
 
     public function destroy(Product $product)
     {
-        $this->authorizeProduct($product);
+        $this->authUser()->checkModelBelongsToMe($product, relationship: 'products');
         $product->delete();
         return response(['message' => 'Eliminado.'], 200);
     }
 
     public function destroyAll()
     {
-        $products = User::find(Auth::user()->id)->products;
+        $products = Auth::user()->products;
         if($products->count() > 0){
             foreach($products as $product){
                 $product->delete();
@@ -81,13 +82,5 @@ class Controller extends BaseController
             return response(['message' => 'Eliminados.'], 200);
         }
         return response(['message' => 'No hay productos para eliminar.'], 200);
-    }
-
-    private function authorizeProduct(Product $product): void
-    {
-        $userProducts = User::find(Auth::user()->id)->products;
-        if( ! $userProducts->contains($product) ){
-            abort(403, message: 'This action is unauthorized.');
-        }
     }
 }

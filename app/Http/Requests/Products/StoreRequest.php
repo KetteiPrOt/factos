@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Products;
 
 use App\Models\User;
-use App\Rules\Products\UniqueFor;
+use App\Rules\Unique\Code as UniqueFor;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,8 +16,9 @@ class StoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = Auth::user();
         return [
-            'code' => ['required', 'string', 'max:25', new UniqueFor(User::find(Auth::user()->id))],
+            'code' => ['required', 'string', 'max:25', new UniqueFor($user, relation: 'products')],
             'name' => 'required|string|max:255',
             'price' => 'required|decimal:0,2|min:0.01|max:999999.99',
             'additional_info' => 'nullable|string|max:255',

@@ -68,7 +68,7 @@
 
 </script>
 
-<nav class="fixed top-0 w-full flex flex-row gap-4 bg-[--color-theme-1] text-slate-50 place-items-center p-4">
+<nav class="fixed z-40 top-0 w-full flex flex-row gap-4 bg-[--color-theme-1] text-slate-50 place-items-center p-4">
     <div>
         <a class=" font-semibold text-4xl" href="home" on:click={closeLBarVisible}>
             Factos
@@ -92,6 +92,11 @@
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
                             <a class="block" href="products" on:click={()=>closeAllDrops()}>
                                 Productos y servicios
+                            </a>
+                        </li>
+                        <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                            <a class="block" href="establishments" on:click={()=>closeAllDrops()}>
+                                Establecimientos
                             </a>
                         </li>
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
@@ -177,6 +182,11 @@
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
                                 <a class="block" href="products" on:click={closeLBarVisible}>
                                     Productos y servicios
+                                </a>
+                            </li>
+                            <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                                <a class="block" href="establishments" on:click={closeLBarVisible}>
+                                    Establecimientos
                                 </a>
                             </li>
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">

@@ -1,16 +1,16 @@
 <script lang="ts">
+    import type { Pagination } from "$lib/interfaces/pagination";
 	import type { Product, ProductGet } from "$lib/interfaces/product";
 	import { onMount } from "svelte";
 
-
 	import { Icon } from "svelte-icons-pack";
-	import { AiFillCaretDown, AiFillFastBackward, AiFillFastForward } from "svelte-icons-pack/ai";
+	import { AiFillFastBackward, AiFillFastForward } from "svelte-icons-pack/ai";
 	import { BiDownload } from "svelte-icons-pack/bi";
 	import type { Writable } from "svelte/store";
-    import { fade, fly, slide } from "svelte/transition";
+    import { fade } from "svelte/transition";
 
     export let requestFunctions: {
-        loadProducts: () => Promise<void>;
+        loadProducts: (url: string | undefined) => Promise<void>;
         getProductById: () => Promise<void>;
     }
 
@@ -20,6 +20,8 @@
     export let toogleModalViewProductVisible: ()=>void;
 
     export let idToSearch: Writable<string>;
+
+    export let paginationData: Writable<Pagination>;
 
     
 
@@ -36,10 +38,20 @@
         }
     }
    
+
+    function loadNextPage () {
+        if ($paginationData.links?.next) {
+            requestFunctions.loadProducts($paginationData.links?.next)
+        }
+    }
+
+    function loadPrevPage () {
+        if ($paginationData.links?.prev) {
+            requestFunctions.loadProducts($paginationData.links?.prev)
+        }
+    }
     
-    
-    
-    onMount(requestFunctions.loadProducts)
+    onMount(()=>requestFunctions.loadProducts(undefined))
 
 </script>
 <section class="max-w-full">
@@ -59,7 +71,7 @@
             </thead>
             <tbody>
                 {#each $products as product}
-                <tr in:fade class="hover:bg-slate-300" data-id="{product.id}">
+                <tr in:fade={{delay: ($products.indexOf(product)*50)}} class="hover:bg-slate-300" data-id="{product.id}">
                     <td>
                         <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
                             {product.code}
@@ -91,13 +103,38 @@
         </table>
     </div>
     <div class="w-full bg-[--color-theme-1] flex flex-row justify-center text-slate-50 p-1 place-items-center gap-4 rounded-b-md">
-        <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50">
+        <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50" on:click={loadPrevPage}>
             <Icon src={AiFillFastBackward} size={20}/>
         </button>
-        <span>
-            ( 1 de X )
-        </span>
-        <button class="flex flex-row gap-2 align-middle bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50">
+        <div class="flex flex-row gap-1">
+            <span>
+                {#if $paginationData}
+                    {#if $paginationData.meta.total > 0}
+                        {$paginationData.meta.current_page}
+                    {:else}
+                        0
+                    {/if}
+                {:else}
+                    0
+                {/if}
+            </span>
+            <span>
+                de
+            </span>
+            <span>
+                {#if $paginationData}
+                    {#if $paginationData.meta.total > 0}
+                        {$paginationData.meta.last_page}
+                    {:else}
+                        0
+                    {/if}
+                {:else}
+                    0
+                {/if}
+            </span>
+
+        </div>
+        <button class="flex flex-row gap-2 align-middle bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50" on:click={loadNextPage}>
             <Icon src={AiFillFastForward} size={20}/>
         </button>
     </div>
