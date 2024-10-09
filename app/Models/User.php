@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Products\Model as Product;
 use App\Models\Establishments\Model as Establishment;
+use App\Models\Persons\Model as Person;
 
 class User extends AuthenticatableUser
 {
@@ -57,13 +58,8 @@ class User extends AuthenticatableUser
         return $this->hasMany(Establishment::class);
     }
 
-    public function checkModelBelongsToMe(object $model, string $relationship, bool $abort = true): bool
+    public function persons(): HasMany
     {
-        $userModels = $this->{$relationship};
-        if( ! $userModels->contains($model) ){
-            if($abort) abort(403, message: 'This action is unauthorized.');
-            return false;
-        }
-        return true;
+        return $this->hasMany(Person::class);
     }
 }
