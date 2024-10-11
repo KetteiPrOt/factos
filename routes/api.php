@@ -5,13 +5,13 @@ use App\Http\Controllers\Auth\Controller as AuthController;
 use App\Http\Controllers\Products\Controller as ProductController;
 use App\Http\Controllers\Establishments\Controller as EstablishmentController;
 use App\Http\Controllers\Establishments\IssuancePointController;
+use App\Http\Controllers\PersonController;
 use App\Http\Controllers\Products\IceTypeController;
 use App\Http\Controllers\Products\VatRateController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
+Route::get('/user', function(){
     return Auth::user();
 })->middleware('auth:sanctum');
 
@@ -49,4 +49,12 @@ Route::middleware(['auth:sanctum'])->controller(IssuancePointController::class)-
     Route::get('/issuance-points/show/{issuancePoint}', 'show')->name('issuance-points.show');
     Route::put('/issuance-points/{issuancePoint}', 'update')->name('issuance-points.update');
     // Route::delete('/issuance-points/{issuancePoint}', 'destroy')->name('issuance-points.destroy');
+});
+
+Route::middleware(['auth:sanctum'])->controller(PersonController::class)->group(function (){
+    Route::get('/persons', 'index')->name('persons.index');
+    // Route::post('/persons', 'store')->name('persons.store');
+    // Route::get('/persons/{person}', 'show')->name('persons.show');
+    // Route::put('/persons/{person}', 'update')->name('persons.update');
+    // Route::delete('/persons/{person}', 'destroy')->name('persons.destroy');
 });
