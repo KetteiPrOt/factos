@@ -5,7 +5,7 @@ namespace App\Http\Requests\Establishments\IssuancePoints;
 use App\Models\Receipts\Type as ReceiptType;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\Unique\Code as UniqueFor;
+use App\Rules\Unique\For\Rule as UniqueFor;
 use Illuminate\Support\Facades\Auth;
 
 class StoreRequest extends FormRequest
@@ -31,7 +31,7 @@ class StoreRequest extends FormRequest
         return [
             'code' => [
                 'required', 'integer', 'min:1', 'max:999',
-                new UniqueFor($this->route('establishment'), relation: 'issuancePoints')
+                new UniqueFor( $this->route('establishment'), relation: 'issuancePoints')
             ],
             'description' => 'string|max:255',
             'sequentials' => [

@@ -24,13 +24,20 @@ class PersonFactory extends Factory
         $max_user_id = User::orderBy('id', 'desc')->first()->id;
         $max_identification_type_id = IdentificationType::orderBy('id', 'desc')->first()->id;
         return [
-            'identification' => '9999999999999',
+            'identification' => $this->randomNumber(13),
             'social_reason' => fake()->name(),
             'email' => fake()->email(),
-            'phone_number' => fake()->e164PhoneNumber(),
+            'phone_number' => $this->randomNumber(10),
             'address' => fake()->sentence(),
             'identification_type_id' => fake()->numberBetween(1, $max_identification_type_id),
             'user_id' => fake()->numberBetween(1, $max_user_id),
         ];
+    }
+
+    private function randomNumber(int $digits): string
+    {
+        $number = '';
+        for($i = 0; $i < $digits; $i++) $number .= fake()->randomDigit();
+        return $number;
     }
 }

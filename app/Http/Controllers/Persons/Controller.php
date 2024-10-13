@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Persons;
 
+use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\Persons\IndexRequest;
+use App\Http\Requests\Persons\StoreRequest;
 use App\Models\Persons\Model as Person;
 use App\Http\Resources\Basic\Index\PaginatedCollection;
 
-class PersonController extends Controller
+class Controller extends BaseController
 {
     public function index(IndexRequest $request)
     {
@@ -27,5 +29,13 @@ class PersonController extends Controller
             'persons.social_reason', 'LIKE', '%'.($validated['social_reason'] ?? null).'%'
         )->orderBy('social_reason')->paginate()->withQueryString();
         return new PaginatedCollection($persons);
+    }
+
+    public function store(StoreRequest $request)
+    {
+        $validated = $request->validated();
+        $validated['user_id'] = $this->authUser()->id;
+        Person::create($validated);
+        return response(['message' => 'Guardado.'], 200);
     }
 }

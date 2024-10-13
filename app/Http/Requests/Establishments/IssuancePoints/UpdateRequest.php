@@ -5,7 +5,7 @@ namespace App\Http\Requests\Establishments\IssuancePoints;
 use App\Models\Receipts\Type as ReceiptType;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\Unique\Code as UniqueFor;
+use App\Rules\Unique\For\Rule as UniqueFor;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateRequest extends FormRequest

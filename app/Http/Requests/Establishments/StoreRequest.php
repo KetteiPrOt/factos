@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Establishments;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\Unique\Code as UniqueFor;
+use App\Rules\Unique\For\Rule as UniqueFor;
 use Illuminate\Support\Facades\Auth;
 
 class StoreRequest extends FormRequest

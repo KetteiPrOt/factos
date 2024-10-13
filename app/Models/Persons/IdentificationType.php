@@ -10,6 +10,11 @@ class IdentificationType extends BaseModel
 {
     public $timestamps = false;
 
+    public static function finalConsumer(): self
+    {
+        return static::where('code', '07')->first();
+    }
+
     public function persons(): HasMany
     {
         return $this->hasMany(Person::class);

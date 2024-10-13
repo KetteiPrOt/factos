@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('identification', 13);
             $table->string('social_reason', 255);
             $table->string('email', 255);
-            $table->string('phone_number', 15)->nullable();
+            $table->char('phone_number', 10)->nullable();
             $table->string('address', 255)->nullable();
             $table->timestamps();
             // Foreign Keys
