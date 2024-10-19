@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Persons;
 use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\Persons\IndexRequest;
 use App\Http\Requests\Persons\StoreRequest;
+use App\Http\Requests\Persons\UpdateRequest;
 use App\Models\Persons\Model as Person;
 use App\Http\Resources\Basic\Index\PaginatedCollection;
 
@@ -37,5 +38,38 @@ class Controller extends BaseController
         $validated['user_id'] = $this->authUser()->id;
         Person::create($validated);
         return response(['message' => 'Guardado.'], 200);
+    }
+
+    public function show(Person $person)
+    {
+        $this->authUser()->checkModelBelongsToMe($person, 'persons');
+        return $person;
+    }
+
+    public function update(UpdateRequest $request, Person $person)
+    {
+        $validated = $request->validated();
+        $validated['user_id'] = $this->authUser()->id;
+        $person->update($validated);
+        return response(['message' => 'Actualizado.'], 200);
+    }
+
+    public function destroy(Person $person)
+    {
+        $this->authUser()->checkModelBelongsToMe($person, relationship: 'persons');
+        $person->delete();
+        return response(['message' => 'Eliminado.'], 200);
+    }
+
+    public function destroyAll()
+    {
+        $persons = $this->authUser()->persons;
+        if($persons->count() > 0){
+            foreach($persons as $person){
+                $person->delete();
+            }
+            return response(['message' => 'Eliminados.'], 200);
+        }
+        return response(['message' => 'No hay personas para eliminar.'], 200);
     }
 }

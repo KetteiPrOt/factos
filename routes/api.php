@@ -60,7 +60,8 @@ Route::middleware(['auth:sanctum'])->get(
 Route::middleware(['auth:sanctum'])->controller(PersonController::class)->group(function (){
     Route::get('/persons', 'index')->name('persons.index');
     Route::post('/persons', 'store')->name('persons.store');
-    // Route::get('/persons/{person}', 'show')->name('persons.show');
-    // Route::put('/persons/{person}', 'update')->name('persons.update');
-    // Route::delete('/persons/{person}', 'destroy')->name('persons.destroy');
+    Route::get('/persons/{person}', 'show')->name('persons.show');
+    Route::put('/persons/{person}', 'update')->name('persons.update');
+    Route::delete('/persons/{person}', 'destroy')->name('persons.destroy');
+    Route::delete('/persons', 'destroyAll')->name('persons.destroy-all');
 });
