@@ -100,9 +100,9 @@
                             </a>
                         </li>
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                            <button class="block w-full">
+                            <a class="block" href="issuance_points" on:click={()=>closeAllDrops()}>
                                 Puntos de emisión
-                            </button>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -163,7 +163,7 @@
 </nav>
 
 {#if lateralBarVisible}
-    <div transition:slide={{axis: "x"}} class="fixed h-[calc(100dvh-72px)] w-3/6 flex flex-col p-4 gap-4 bg-blue-700/50 backdrop-blur-sm sm:hidden text-slate-50">
+    <div transition:slide={{axis: "x"}} class="fixed z-20 h-[calc(100dvh-72px)] w-3/6 flex flex-col p-4 gap-4 bg-blue-700/50 backdrop-blur-sm sm:hidden text-slate-50">
         <div class="flex justify-center text-center">
             <ul class="flex flex-col gap-1 place-items-center">
                 <li class="relative">
@@ -190,9 +190,9 @@
                                 </a>
                             </li>
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
-                                <button class="block w-full" >
+                                <a class="block" href="issuance_points" on:click={closeLBarVisible}>
                                     Puntos de emisión
-                                </button>
+                                </a>
                             </li>
                         </ul>
                     </div>

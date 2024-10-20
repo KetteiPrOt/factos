@@ -1,3 +1,4 @@
+import type { IssuancePoint } from "./issuance_point";
 import type { Product } from "./product";
 
 export interface Pagination {
@@ -13,4 +14,8 @@ export interface Pagination {
         last_page: number,
         total: number
     }
+}
+
+export interface PaginationIssuancePonints extends Omit<Pagination, 'data'> {
+    data: IssuancePoint[]
 }

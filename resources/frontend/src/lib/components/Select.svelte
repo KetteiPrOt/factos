@@ -6,12 +6,19 @@
     // export let updateIceId: (id: number)=>void;
     export let optionSelected: Writable<number>;
     export let alert: boolean;
+    export let pos: "up" | "down" = "up";
     
     let isOpen = false;
 
-    $: nameSelected = options.find((opt)=>{ 
-        return opt.id === $optionSelected
-    })?.name
+    let nameSelected : string | undefined;
+
+    $: {
+        if (options) {
+            nameSelected = options.find((opt)=>{ 
+                return opt.id === $optionSelected
+            })?.name
+        }
+    }
 
 
     function toogleOpen () {
@@ -33,15 +40,17 @@
         </span>
     </button>
     {#if isOpen}
-    <div transition:slide={{axis: "y"}} class="absolute flex flex-col gap-1 p-1 bg-slate-100 w-80 max-h-[300px] overflow-y-auto rounded-md bottom-[27px] left-[-2px]">
+    <div transition:slide={{axis: "y"}} class="absolute flex flex-col gap-1 p-1 bg-slate-100 w-80 max-h-[300px] overflow-y-auto rounded-md {pos === "up" ? 'bottom-[27px]' : 'top-[27px]'} left-[-2px]">
         <button class="hover:bg-blue-500/70" on:click={()=>selectThisOpt(0)}>
             Ninguno
         </button>
+        {#if options}
         {#each options as option}
         <button class=" {$optionSelected === option.id ? 'bg-blue-500/90 hover:bg-blue-500' : 'hover:bg-blue-500/70'}" on:click|stopPropagation={()=>selectThisOpt(option.id)}>
             {option.name}
         </button>
         {/each}
+        {/if}
     </div>
     {/if}
 </button>
