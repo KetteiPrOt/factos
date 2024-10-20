@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Products;
 
 use App\Models\User;
-use App\Rules\Unique\Code as UniqueFor;
+use App\Rules\Unique\For\Rule as UniqueFor;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,7 +42,7 @@ class UpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'code' => 'codigo',
+            'code' => 'código',
             'name' => 'nombre',
             'price' => 'precio',
             'additional_info' => 'información adicional',

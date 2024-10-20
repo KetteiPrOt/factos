@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Rules\Unique;
+namespace App\Rules\Unique\For;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class Code implements ValidationRule
+class Rule implements ValidationRule
 {
     /**
      * The parent model
@@ -38,14 +38,14 @@ class Code implements ValidationRule
     {
         $ignore_id = $this->ignore;
         $not_unique = $this->model->{$this->relation}->contains(
-            function(object $model, int $key) use ($value, $ignore_id) {
+            function(object $model, int $key) use ($value, $ignore_id, $attribute) {
                 return is_null($ignore_id)
-                    ? $model->code == $value
-                    : $model->code == $value && $model->id != $ignore_id;
+                    ? $model->{$attribute} == $value
+                    : $model->{$attribute} == $value && $model->id != $ignore_id;
             }
         );
         if($not_unique){
-            $fail('El campo código ya ha sido registrado.');
+            $fail('El campo :attribute ya ha sido registrado.');
         }
     }
 }

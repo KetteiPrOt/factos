@@ -4,7 +4,7 @@ namespace App\Http\Requests\Establishments;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use App\Rules\Unique\Code as UniqueFor;
+use App\Rules\Unique\For\Rule as UniqueFor;
 
 class UpdateRequest extends FormRequest
 {
