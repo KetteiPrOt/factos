@@ -9,6 +9,7 @@ use App\Http\Controllers\Persons\Controller as PersonController;
 use App\Http\Controllers\Persons\IdentificationTypeController;
 use App\Http\Controllers\Products\IceTypeController;
 use App\Http\Controllers\Products\VatRateController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,12 @@ Route::get('/user', function(){
 })->middleware('auth:sanctum');
 
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware(['auth:sanctum'])->controller(ProfileController::class)->group(function (){
+    Route::get('/profile', 'show')->name('profile.show');
+    Route::put('/profile', 'update')->name('profile.update');
+    Route::put('/profile/password', 'updatePassword')->name('profile.update-password');
+});
 
 Route::middleware(['auth:sanctum'])->controller(AuthController::class)->group(function (){
     Route::post('/logout', [AuthController::class, 'logout']);
