@@ -9,7 +9,8 @@ use App\Http\Controllers\Persons\Controller as PersonController;
 use App\Http\Controllers\Persons\IdentificationTypeController;
 use App\Http\Controllers\Products\IceTypeController;
 use App\Http\Controllers\Products\VatRateController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Profile\Controller as ProfileController;
+use App\Http\Controllers\Profile\CertificateController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,11 @@ Route::middleware(['auth:sanctum'])->controller(ProfileController::class)->group
     Route::get('/profile', 'show')->name('profile.show');
     Route::put('/profile', 'update')->name('profile.update');
     Route::put('/profile/password', 'updatePassword')->name('profile.update-password');
+});
+
+Route::middleware(['auth:sanctum'])->controller(CertificateController::class)->group(function (){
+    Route::get('/certificate', 'show')->name('certificate.show');
+    Route::put('/certificate', 'update')->name('certificate.update');
 });
 
 Route::middleware(['auth:sanctum'])->controller(AuthController::class)->group(function (){

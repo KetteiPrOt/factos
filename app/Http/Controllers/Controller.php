@@ -7,6 +7,15 @@ use Illuminate\Support\Facades\Auth;
 
 abstract class Controller
 {
+    protected string $openssl = '';
+
+    protected string $storage_path = '../storage/app/private';
+
+    public function __construct()
+    {
+        $this->openssl = config('app.openssl-cli', 'openssl');
+    }
+
     protected function authUser(): ?User
     {
         return Auth::user();

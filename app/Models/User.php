@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\Products\Model as Product;
 use App\Models\Establishments\Model as Establishment;
 use App\Models\Persons\Model as Person;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends AuthenticatableUser
 {
@@ -61,5 +62,10 @@ class User extends AuthenticatableUser
     public function persons(): HasMany
     {
         return $this->hasMany(Person::class);
+    }
+
+    public function certificate(): HasOne
+    {
+        return $this->hasOne(Certificate::class);
     }
 }

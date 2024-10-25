@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | OpenSSL
+    |--------------------------------------------------------------------------
+    |
+    | This configuration option determine the OpenSSL CLI version that will
+    | be used in the electronic signature operations.
+    |
+    */
+
+    'openssl-cli' => env('OPENSSL_CLI', 'openssl')
+
 ];

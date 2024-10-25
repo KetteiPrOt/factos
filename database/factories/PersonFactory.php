@@ -4,13 +4,12 @@ namespace Database\Factories;
 
 use App\Models\Persons\IdentificationType;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Persons\Model as Person;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class PersonFactory extends Factory
+class PersonFactory extends BaseFactory
 {
     protected $model = Person::class;
 
@@ -32,12 +31,5 @@ class PersonFactory extends Factory
             'identification_type_id' => fake()->numberBetween(1, $max_identification_type_id),
             'user_id' => fake()->numberBetween(1, $max_user_id),
         ];
-    }
-
-    private function randomNumber(int $digits): string
-    {
-        $number = '';
-        for($i = 0; $i < $digits; $i++) $number .= fake()->randomDigit();
-        return $number;
     }
 }

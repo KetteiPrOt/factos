@@ -2,14 +2,13 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
-class UserFactory extends Factory
+class UserFactory extends BaseFactory
 {
     /**
      * The current password being used by the factory.
@@ -24,6 +23,8 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'ruc' => $this->randomNumber(13),
+            'matrix_address' => fake()->sentence(),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),

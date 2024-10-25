@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Certificate;
 use App\Models\User;
 use Database\Seeders\Products\IceTypeSeeder;
 use Database\Seeders\Products\VatRateSeeder;
@@ -34,15 +35,17 @@ class DatabaseSeeder extends Seeder
 
         // Fake data for testing
         if($this->fakeData){
-            User::factory()->create([
+            $user0 = User::factory()->create([
                 'name' => 'Test User',
                 'email' => 'test@example.com',
             ]);
+            Certificate::create(['user_id' => $user0->id]);
 
-            User::factory()->create([
+            $user1 = User::factory()->create([
                 'name' => 'Test User 2',
                 'email' => 'test_2@example.com',
             ]);
+            Certificate::create(['user_id' => $user1->id]);
 
             $this->call([
                 ProductSeeder::class,
