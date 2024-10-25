@@ -20,7 +20,15 @@ class UpdateRequest extends FormRequest
             'email' => [
                 'required', 'string', 'max:255', 'email:rfc,strict',
                 Rule::unique('users', 'email')->ignore(Auth::user()->id)
-            ]
+            ],
+            'logo' => 'sometimes|file|max:512|image|dimensions:ratio=1/1'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'logo.dimensions' => 'El logo debe tener dimensiones de imagen de aspecto cuadrado (1/1).'
         ];
     }
 }
