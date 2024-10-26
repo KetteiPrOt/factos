@@ -51,6 +51,7 @@ class Controller extends BaseController
         $validated = $request->validated();
         $validated['user_id'] = $this->authUser()->id;
         $person->update($validated);
+        return $validated;
         return response(['message' => 'Actualizado.'], 200);
     }
 

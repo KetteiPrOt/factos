@@ -29,8 +29,8 @@ class StoreRequest extends FormRequest
             ],
             'social_reason' => 'required|string|max:255',
             'email' => 'required|string|max:255|email:rfc,strict',
-            'phone_number' => ['bail', 'string', 'size:10', new NumericDigits],
-            'address' => 'string|max:255',
+            'phone_number' => ['bail', 'nullable', 'string', 'size:10', new NumericDigits],
+            'address' => 'nullable|string|max:255',
             'identification_type_id' => [
                 'required', 'integer', 'exists:identification_types,id',
                 Rule::notIn($final_consumer_id)
