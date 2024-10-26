@@ -14,7 +14,7 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'signature' => 'required|file|max:50|extensions:p12',
+            'certificate' => 'required|file|max:50|extensions:p12',
             'password' => 'required|string|max:255'
         ];
     }

@@ -39,7 +39,7 @@ class UpdateRequest extends FormRequest
         return [
             'identification' => [
                 'bail', 'required', 'string', 'min:10', 'max:13',
-                new NumericDigits,new UniqueFor(
+                new NumericDigits, new UniqueFor(
                     $user, relation: 'persons', ignore: $person->id
                 ), new ExactSizes(10, 13)
             ],

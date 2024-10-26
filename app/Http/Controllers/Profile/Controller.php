@@ -16,7 +16,9 @@ class Controller extends BaseController
         $data = [
             'name' => $user->name,
             'email' => $user->email,
-            'logo' => ''
+            'logo' => '',
+            'ruc' => $user->ruc,
+            'matrix_address' => $user->matrix_address
         ];
         if(Storage::exists("/logos/$user->id")){
             $mimeType = Storage::mimeType("/logos/$user->id");

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Profile;
 
+use App\Rules\String\NumericDigits;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -21,7 +22,12 @@ class UpdateRequest extends FormRequest
                 'required', 'string', 'max:255', 'email:rfc,strict',
                 Rule::unique('users', 'email')->ignore(Auth::user()->id)
             ],
-            'logo' => 'sometimes|file|max:512|image|dimensions:ratio=1/1'
+            'logo' => 'sometimes|file|max:512|image|dimensions: ratio=1/1',
+            'ruc' => [
+                'bail', 'required', 'string', 'size:13', new NumericDigits,
+                Rule::unique('users', 'ruc')->ignore(Auth::user()->id)
+            ],
+            'matrix_address' => 'required|string|max:255'
         ];
     }
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('ruc', 13);
+            $table->string('ruc', 13)->unique();
             $table->string('matrix_address', 255);
             $table->string('name');
             $table->string('email')->unique();
