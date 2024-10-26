@@ -104,6 +104,11 @@
                                 Puntos de emisión
                             </a>
                         </li>
+                        <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                            <a class="block" href="persons" on:click={()=>closeAllDrops()}>
+                                Clientes
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 {/if}
@@ -192,6 +197,11 @@
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
                                 <a class="block" href="issuance_points" on:click={closeLBarVisible}>
                                     Puntos de emisión
+                                </a>
+                            </li>
+                            <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                                <a class="block" href="persons" on:click={closeLBarVisible}>
+                                    Clientes
                                 </a>
                             </li>
                         </ul>
