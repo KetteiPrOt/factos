@@ -142,7 +142,7 @@
     
     <div class="sm:flex flex-row gap-3 hidden">
         
-        <button class="border p-1.5 rounded-md hover:bg-slate-700/30">
+        <button class="border p-1.5 rounded-md hover:bg-slate-700/30" on:click={()=>goto('profile')}>
             Perfil
         </button>
         

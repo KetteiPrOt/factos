@@ -1,9 +1,12 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
+    import InputPassword from "$lib/components/InputPassword.svelte";
+    import { writable } from "svelte/store";
     import { fade, scale, slide } from "svelte/transition";
 
     let inputEmailElement: HTMLInputElement;
     let inputPasswordElement: HTMLInputElement;
+    const focusInputPass = writable(false);
 
 
     let credentials: {email: string, password: string, remember_me: boolean | undefined} = {
@@ -114,10 +117,14 @@
                 alertsInput.email = true;
             };
             if (validEmail) {
-                if (inputPasswordElement) {
-                    inputPasswordElement.focus();
+                focusInputPass.set(true);
+            } else {
+                console.log(inputEmailElement)
+                if (inputEmailElement) {
+                    inputEmailElement.focus()
                 }
             }
+
         }
     }
 
@@ -154,13 +161,14 @@
                 <label for="email" class="text-xl p-1">
                     Correo
                 </label>
-                <input bind:this={inputEmailElement} type="text" name="email" class="border {alertsInput.email ? 'border-red-500': 'border-[--color-border]'} bg-transparent rounded-md px-1 place-self-center w-full " on:input={(e)=>updateEmail(e)} on:keypress={(e)=>nextInput(e)}>
+                <input bind:this={inputEmailElement} type="text" name="email" class="border {alertsInput.email ? 'border-red-500': 'border-[--color-border]'} bg-transparent rounded-md px-1 place-self-center w-full outline-none" on:input={(e)=>updateEmail(e)} on:keypress={(e)=>nextInput(e)}>
             </div>
             <div class="flex flex-col gap-2">
                 <label for="password" class="text-xl p-1">
                     Contraseña
                 </label>
-                <input bind:this={inputPasswordElement} type="password" name="password" class="border {alertsInput.password ? 'border-red-500': 'border-[--color-border]'} bg-transparent rounded-md px-1 place-self-center w-full" on:input={(e)=>updatePassword(e)} on:keypress={(e)=>finalizedInputs(e)}>
+                <!-- <input bind:this={inputPasswordElement} type="password" name="password" class="border {alertsInput.password ? 'border-red-500': 'border-[--color-border]'} bg-transparent rounded-md px-1 place-self-center w-full" on:input={(e)=>updatePassword(e)} on:keypress={(e)=>finalizedInputs(e)}> -->
+                <InputPassword name="password" alert={alertsInput.password} updatePass={updatePassword} keyPress={finalizedInputs} focusInputPass={focusInputPass} />
             </div>
             <div class="flex flex-row gap-2 pl-1 items-center">
                 <input type="checkbox" name="remember_me" class="border border-[--color-border] bg-transparent rounded-md overflow-hidden px-1 w-5 h-5" on:change={(e)=>updateRememberMe(e)}>
