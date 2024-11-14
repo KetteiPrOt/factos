@@ -142,7 +142,7 @@
     
     <div class="sm:flex flex-row gap-3 hidden">
         
-        <button class="border p-1.5 rounded-md hover:bg-slate-700/30" on:click={()=>goto('profile')}>
+        <button class="border p-1.5 rounded-md hover:bg-slate-700/30" on:click={()=>{goto('profile'); closeAllDrops()}}>
             Perfil
         </button>
         
@@ -237,7 +237,7 @@
         
         <div class="mt-auto py-3 flex flex-row gap-3 justify-center">
             
-            <button class="border p-1.5 rounded-md hover:bg-slate-700/30">
+            <button class="border p-1.5 rounded-md hover:bg-slate-700/30" on:click={()=>{goto('profile'); closeLBarVisible()}}>
                 Perfil
             </button>
             

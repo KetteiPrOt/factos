@@ -9,34 +9,32 @@
     export let alert: boolean = false;
     export let updatePass: (e: Event) => void = (e) => {};
     export let keyPress: (e: KeyboardEvent) => void = (e) => {};
+    export let bindInput: Writable<HTMLInputElement> = writable();
     
     export let focusInputPass: Writable<boolean> = writable(false);
     
-    let showPass = false;
-
-    let input: HTMLInputElement;
+    let showPass = false; 
 
     function toogleShowPass () {
         showPass = !showPass;
-        if (input) {
-            input.focus()
+        if ($bindInput) {
+            $bindInput.focus()
         }
     }
 
     $: {
         if ($focusInputPass) {
-            if (input) {
-                input.focus()
+            if ($bindInput) {
+                $bindInput.focus()
                 focusInputPass.set(false);
             }
         }
     }
 
-
 </script>
 
-<div class="flex flex-row px-1 border {alert ? 'border-red-500' : 'border-[--color-border]'} min-h-[26px] bg-transparent rounded-md {tailwindClass}">
-    <input bind:this={input} name={name} type="{showPass ? 'text' : 'password'}" class="bg-transparent pr-1 outline-none flex-grow" on:input={(e)=>updatePass(e)} on:keypress={(e)=>keyPress(e)}>
+<div class="flex flex-row px-1 border {alert ? 'border-red-500' : 'border-[--color-border]'} min-h-[26px] bg-transparent rounded-md {tailwindClass}">    
+    <input bind:this={$bindInput} name={name} type="{showPass ? 'text' : 'password'}" class="bg-transparent pr-1 outline-none flex-grow" on:input={(e)=>updatePass(e)} on:keypress={(e)=>keyPress(e)} aria-autocomplete='none'>
     <button on:click={toogleShowPass} class="outline-none">
         {#if showPass}
             <div in:scale>
