@@ -24,6 +24,7 @@ class User extends AuthenticatableUser
         'name',
         'email',
         'password',
+        'matrix_address'
     ];
 
     /**

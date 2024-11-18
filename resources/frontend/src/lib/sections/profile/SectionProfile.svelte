@@ -232,7 +232,7 @@
         </div>
         <div class="flex flex-col gap-1">
             <label for="matriz_address">Dirección matriz:</label>
-            <input disabled bind:value={$myUser.matrix_address} name="matriz_address" class="border border-[--color-border] bg-transparent rounded-md px-1 outline-none" type="text" autocomplete="off">
+            <input bind:value={$myUser.matrix_address} name="matriz_address" class="border border-[--color-border] bg-transparent rounded-md px-1 outline-none" type="text" autocomplete="off">
         </div>
         <div class="flex flex-row text-slate-50 mt-4 gap-3">
             <button on:click={sendUpdate} class="bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600">
