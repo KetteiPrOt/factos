@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Establishments\IssuancePoints\StoreRequest;
 use App\Http\Requests\Establishments\IssuancePoints\UpdateRequest;
 use App\Http\Resources\Establishments\IssuancePoints\Index\PaginatedCollection;
-use App\Http\Resources\Establishments\IssuancePoints\ShowResource as Resource;
+use App\Http\Resources\Establishments\IssuancePoints\ShowResource;
+use App\Http\Resources\Establishments\IssuancePoints\ChooseResource;
 use App\Models\Establishments\Model as Establishment;
 use App\Models\Establishments\IssuancePoint;
 use App\Models\Establishments\Sequential;
@@ -14,6 +15,12 @@ use App\Models\Receipts\Type as ReceiptType;
 
 class IssuancePointController extends Controller
 {
+    public function choose(Establishment $establishment)
+    {
+        $this->authUser()->checkModelBelongsToMe($establishment, relationship: 'establishments');
+        return ChooseResource::collection($establishment->issuancePoints);
+    }
+
     public function index(Establishment $establishment)
     {
         $this->authUser()->checkModelBelongsToMe($establishment, relationship: 'establishments');
@@ -50,7 +57,7 @@ class IssuancePointController extends Controller
             $issuancePoint->establishment,
             relationship: 'establishments'
         );
-        return new Resource($issuancePoint);
+        return new ShowResource($issuancePoint);
     }
 
     public function update(UpdateRequest $request, IssuancePoint $issuancePoint)

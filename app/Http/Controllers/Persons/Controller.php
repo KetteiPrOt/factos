@@ -8,9 +8,21 @@ use App\Http\Requests\Persons\StoreRequest;
 use App\Http\Requests\Persons\UpdateRequest;
 use App\Models\Persons\Model as Person;
 use App\Http\Resources\Basic\Index\PaginatedCollection;
+use App\Http\Resources\Persons\SearchResource;
+use Illuminate\Http\Request;
 
 class Controller extends BaseController
 {
+    public function search(Request $request)
+    {
+        $validated = $request->validate(['identification' => 'required|string|max:255']);
+        $person = Person::where('user_id', $this->authUser()->id)
+            ->where('identification', 'LIKE', '%' . $validated['identification'] . '%')
+            ->first();
+        if($person) return new SearchResource($person);
+        return response([ 'message' => 'Sin resultados para la búsqueda.'], 404);
+    }
+
     public function index(IndexRequest $request)
     {
         $validated = $request->validated();

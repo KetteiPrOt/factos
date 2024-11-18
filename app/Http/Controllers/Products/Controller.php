@@ -8,11 +8,27 @@ use App\Http\Requests\Products\StoreRequest;
 use App\Http\Requests\Products\UpdateRequest;
 use App\Http\Resources\Basic\Index\PaginatedCollection;
 use App\Http\Resources\Products\Resource;
+use App\Http\Resources\Products\SearchResource;
 use App\Models\Products\Model as Product;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class Controller extends BaseController
 {
+    public function search(Request $request)
+    {
+        $validated = $request->validate(['look' => 'required|string|max:255']);
+        $look = '%' . $validated['look'] . '%';
+        $products = Product::where('user_id', $this->authUser()->id)
+            ->where(function(Builder $query) use ($look) {
+                $query->where('code', 'LIKE', $look)
+                    ->orWhere('name', 'LIKE', $look);
+            })->limit(10)->get();
+        if($products->count() > 0) return SearchResource::collection($products);
+        return response([ 'message' => 'Sin resultados para la búsqueda.'], 404);
+    }
+
     public function index(IndexRequest $request)
     {
         $validated = $request->validated();

@@ -10,6 +10,7 @@ use App\Models\Products\Model as Product;
 use App\Models\Establishments\Model as Establishment;
 use App\Models\Persons\Model as Person;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Receipts\Model as Receipt;
 
 class User extends AuthenticatableUser
 {
@@ -68,5 +69,10 @@ class User extends AuthenticatableUser
     public function certificate(): HasOne
     {
         return $this->hasOne(Certificate::class);
+    }
+
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(Receipt::class);
     }
 }

@@ -36,6 +36,7 @@ Route::middleware(['auth:sanctum'])->controller(AuthController::class)->group(fu
 });
 
 Route::middleware(['auth:sanctum'])->controller(ProductController::class)->group(function (){
+    Route::get('/products/search', 'search')->name('products.search');
     Route::get('/products', 'index')->name('products.index');
     Route::post('/products', 'store')->name('products.store');
     Route::get('/products/{product}', 'show')->name('products.show');
@@ -58,6 +59,7 @@ Route::middleware(['auth:sanctum'])->controller(EstablishmentController::class)-
 Route::middleware(['auth:sanctum'])->get('/receipt-types', [ReceiptTypeController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->controller(IssuancePointController::class)->group(function (){
+    Route::get('/issuance-points/{establishment}/choose', 'choose')->name('issuance-points.choose');
     Route::get('/issuance-points/{establishment}', 'index')->name('issuance-points.index');
     Route::post('/issuance-points/{establishment}', 'store')->name('issuance-points.store');
     Route::get('/issuance-points/show/{issuancePoint}', 'show')->name('issuance-points.show');
@@ -71,6 +73,7 @@ Route::middleware(['auth:sanctum'])->get(
 );
 
 Route::middleware(['auth:sanctum'])->controller(PersonController::class)->group(function (){
+    Route::get('/persons/search', 'search')->name('persons.search');
     Route::get('/persons', 'index')->name('persons.index');
     Route::post('/persons', 'store')->name('persons.store');
     Route::get('/persons/{person}', 'show')->name('persons.show');
