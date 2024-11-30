@@ -12,7 +12,8 @@
     let alertsInput = {
         name: false,
         email: false,
-        ruc: false
+        ruc: false,
+        matrix_address: false
     }
 
     let alertFile: string = "";
@@ -50,6 +51,7 @@
     $: { $myUser.name ; alertsInput.name = false }
     $: { $myUser.email ; alertsInput.email = false }
     $: { $myUser.ruc ; alertsInput.ruc = false }
+    $: { $myUser.matrix_address ; alertsInput.matrix_address = false }
 
     //Update logo validations
     function updateLogo (e: Event) {
@@ -141,6 +143,7 @@
         if (!$myUser.name) { alertsInput.name = true ; valid = false };
         if (!emailRegex.test($myUser.email)) { alertsInput.email = true ; valid = false };
         if (!checkRUC()) { alertsInput.ruc = true ; valid = false };
+        if (!$myUser.matrix_address) { alertsInput.matrix_address = true ; valid = false };
 
         Object.values(alertsInput).forEach(alert => {
             if (alert) {
@@ -155,9 +158,8 @@
         formData.set('name', $myUser.name);
         formData.set('email', $myUser.email);
         formData.set('ruc', $myUser.ruc);
-        if ($myUser.matrix_address) {
-            formData.set('matrix_address', $myUser.matrix_address);
-        }
+        formData.set('matrix_address', $myUser.matrix_address);
+        
         if ($myUser.logoFile) {
             formData.set('logo', $myUser.logoFile);
             if (inputLogo) {
@@ -232,7 +234,7 @@
         </div>
         <div class="flex flex-col gap-1">
             <label for="matriz_address">Dirección matriz:</label>
-            <input bind:value={$myUser.matrix_address} name="matriz_address" class="border border-[--color-border] bg-transparent rounded-md px-1 outline-none" type="text" autocomplete="off">
+            <input bind:value={$myUser.matrix_address} name="matriz_address" class="border {alertsInput.matrix_address ? 'border-red-500' : 'border-[--color-border]'} bg-transparent rounded-md px-1 outline-none" type="text" autocomplete="off">
         </div>
         <div class="flex flex-row text-slate-50 mt-4 gap-3">
             <button on:click={sendUpdate} class="bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600">

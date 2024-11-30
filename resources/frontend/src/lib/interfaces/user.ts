@@ -3,6 +3,6 @@ export interface User {
     email: string
     logo?: string
     ruc: string
-    matrix_address?: string
+    matrix_address: string
     logoFile?: File
 }
