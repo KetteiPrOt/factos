@@ -10,6 +10,7 @@
     let lateralBarVisible = false;
     let dropConfVisible = false;
     let dropEmisVisible = false;
+    let dropReceiptsVisible = false;
 
     //Toggle visibility
     function toogleLBarVisible () {
@@ -20,20 +21,27 @@
         closeAllDrops();
     }
     function closeAllDrops (exc?: string) {
-        if (exc != "config") {
+        if (exc !== "config") {
             dropConfVisible = false;
         }
-        if (exc != "emition") {
+        if (exc !== "emition") {
             dropEmisVisible = false;
         }
+        if (exc !== "receipts") {
+            dropReceiptsVisible = false;
+        }
     }
-    function toogleDropConfVisible () {
+    function toggleDropConfVisible () {
         closeAllDrops("config");
         dropConfVisible = !dropConfVisible;
     }
-    function toogleDropEmisVisible () {
+    function toggleDropEmisVisible () {
         closeAllDrops("emition");
         dropEmisVisible = !dropEmisVisible;
+    }
+    function toggleDropReceiptsVisible () {
+        closeAllDrops("receipts");
+        dropReceiptsVisible = !dropReceiptsVisible;
     }
 
     async function logout () {
@@ -77,7 +85,7 @@
     <div class=" ml-auto hidden sm:block">
         <ul class="flex flex-row gap-1">
             <li class="relative">
-                <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toogleDropConfVisible}>
+                <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toggleDropConfVisible}>
                     <span>Configuración</span>
                     <Icon src={AiFillCaretDown} />
                 </button>
@@ -114,7 +122,7 @@
                 {/if}
             </li>
             <li class="relative">
-                <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toogleDropEmisVisible}>
+                <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toggleDropEmisVisible}>
                     <span>Emisión</span>
                     <Icon src={AiFillCaretDown} />
                 </button>
@@ -130,11 +138,27 @@
                 </div>
                 {/if}
             </li>
-            <li>
-                <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b">
+            <li class="relative">
+                <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toggleDropReceiptsVisible}>
                     <span>Comprobantes</span>
                     <Icon src={AiFillCaretDown} />
                 </button> 
+                {#if dropReceiptsVisible}
+                <div transition:slide={{axis: "y"}} class="absolute top-[32px] w-full bg-slate-50/70 backdrop-blur rounded-b-md p-1 text-[--color-theme-1] font-medium text-center">
+                    <ul>
+                        <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                            <a class="block" href="receipts_management" on:click={()=>closeAllDrops()}>
+                                Administración
+                            </a>
+                        </li>
+                        <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                            <a class="block" href="receipts_unauthorized" on:click={()=>closeAllDrops()}>
+                                No autorizados
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {/if}
             </li>
         </ul>
 
@@ -172,7 +196,7 @@
         <div class="flex justify-center text-center">
             <ul class="flex flex-col gap-1 place-items-center">
                 <li class="relative">
-                    <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toogleDropConfVisible}>
+                    <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toggleDropConfVisible}>
                         <span>Configuración</span>
                         <Icon src={AiFillCaretDown} />
                     </button>
@@ -209,7 +233,7 @@
                     {/if}
                 </li>
                 <li class="relative">
-                    <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toogleDropEmisVisible}>
+                    <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toggleDropEmisVisible}>
                         <span>Emisión</span>
                         <Icon src={AiFillCaretDown} />
                     </button>
@@ -225,11 +249,27 @@
                     </div>
                     {/if}
                 </li>
-                <li>
-                    <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b">
+                <li class="relative">
+                    <button class="flex flex-wrap max-h-[32px] overflow-y-hidden justify-center place-items-center gap-1 p-1 hover:border-b" on:click={toggleDropReceiptsVisible}>
                         <span>Comprobantes</span>
                         <Icon src={AiFillCaretDown} />
                     </button> 
+                    {#if dropReceiptsVisible}
+                    <div transition:slide={{axis: "y"}} class="absolute top-[32px] w-full bg-slate-50/70 backdrop-blur  rounded-b-md p-1 text-[--color-theme-1] font-medium text-center z-10">
+                        <ul>
+                            <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                                <a class="block" href="receipts_management" on:click={closeLBarVisible}>
+                                    Administración
+                                </a>
+                            </li>
+                            <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                                <a class="block" href="receipts_unauthorized" on:click={closeLBarVisible}>
+                                    No autorizados
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    {/if}
                 </li>
             </ul>
     
