@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Receipts\Invoices\Controller as InvoiceController;
 use App\Http\Controllers\Receipts\TypeController as ReceiptTypeController;
 use App\Http\Controllers\Auth\Controller as AuthController;
 use App\Http\Controllers\Products\Controller as ProductController;
@@ -80,4 +81,8 @@ Route::middleware(['auth:sanctum'])->controller(PersonController::class)->group(
     Route::put('/persons/{person}', 'update')->name('persons.update');
     Route::delete('/persons/{person}', 'destroy')->name('persons.destroy');
     Route::delete('/persons', 'destroyAll')->name('persons.destroy-all');
+});
+
+Route::middleware(['auth:sanctum'])->controller(InvoiceController::class)->group(function(){
+    Route::post('/receipts/invoices', 'issue')->name('invoices.issue');
 });

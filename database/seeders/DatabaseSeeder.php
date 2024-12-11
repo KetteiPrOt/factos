@@ -12,6 +12,7 @@ use Database\Seeders\Receipt\Type as RecieptTypeSeeder;
 use Database\Seeders\Establishments\Seeder as EstablishmentSeeder;
 use Database\Seeders\Persons\IdentificationTypeSeeder;
 use Database\Seeders\Persons\Seeder as PersonSeeder;
+use Database\Seeders\Receipt\Invoices\PayMethodSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,6 +28,7 @@ class DatabaseSeeder extends Seeder
     {
         // Predefined tables by SRI
         $this->call([
+            PayMethodSeeder::class,
             VatRateSeeder::class,
             IceTypeSeeder::class,
             RecieptTypeSeeder::class,
