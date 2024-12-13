@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\Controller as AuthController;
 use App\Http\Controllers\Products\Controller as ProductController;
 use App\Http\Controllers\Establishments\Controller as EstablishmentController;
 use App\Http\Controllers\Establishments\IssuancePointController;
+use App\Http\Controllers\Receipts\Invoices\PayMethodController;
 use App\Http\Controllers\Persons\Controller as PersonController;
 use App\Http\Controllers\Persons\IdentificationTypeController;
 use App\Http\Controllers\Products\IceTypeController;
@@ -82,6 +83,8 @@ Route::middleware(['auth:sanctum'])->controller(PersonController::class)->group(
     Route::delete('/persons/{person}', 'destroy')->name('persons.destroy');
     Route::delete('/persons', 'destroyAll')->name('persons.destroy-all');
 });
+
+Route::middleware(['auth:sanctum'])->get('/pay-methods', [PayMethodController::class, 'index'])->name('pay-methods.index');
 
 Route::middleware(['auth:sanctum'])->controller(InvoiceController::class)->group(function(){
     Route::post('/receipts/invoices', 'issue')->name('invoices.issue');
