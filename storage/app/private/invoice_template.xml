@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.0.0">
+    <infoTributaria>
+        <ambiente>1</ambiente>
+        <tipoEmision>1</tipoEmision>
+        <razonSocial>{{user_name}}</razonSocial>
+        <nombreComercial>{{establishment_commercial_name}}</nombreComercial>
+        <ruc>{{user_ruc}}</ruc>
+        <claveAcceso>{{access_key}}</claveAcceso>
+        <codDoc>01</codDoc>
+        <estab>{{establishment_code}}</estab>
+        <ptoEmi>{{issuance_point_code}}</ptoEmi>
+        <secuencial>{{sequential}}</secuencial>
+        <dirMatriz>{{user_matrix_address}}</dirMatriz>
+    </infoTributaria>
+    <infoFactura>
+        <fechaEmision>{{issuance_date}}</fechaEmision>
+        <dirEstablecimiento>{{establishment_address}}</dirEstablecimiento>
+        <obligadoContabilidad>{{obliged_accounting}}</obligadoContabilidad>
+        <tipoIdentificacionComprador>{{identification_type_code}}</tipoIdentificacionComprador>
+        <razonSocialComprador>{{client_name}}</razonSocialComprador>
+        <identificacionComprador>{{client_identification}}</identificacionComprador>
+        <totalSinImpuestos>{{total_without_taxation}}</totalSinImpuestos>
+        <totalDescuento>{{total_discount}}</totalDescuento>
+        <totalConImpuestos>
+            {{total_with_taxes}}
+        </totalConImpuestos>
+        <propina>{{propine}}</propina>
+        <importeTotal>{{total}}</importeTotal>
+        <moneda>DOLAR</moneda>
+        <pagos>
+            {{pay_methods}}
+        </pagos>
+    </infoFactura>
+    <detalles>
+        {{details}}
+    </detalles>
+    <infoAdicional>
+        {{additional_fields}}
+    </infoAdicional>
+</factura>
