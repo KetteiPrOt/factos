@@ -83,7 +83,7 @@ class IssueRequest extends FormRequest
             'tip_ten_percent' => 'sometimes|accepted',
             // Payment Methods Section
             'payment_methods' => 'required|array|max:10',
-            'payment_methods.*' => 'required|array:pay_method_id,value,term,time|size:4',
+            'payment_methods.*' => 'required|array:pay_method_id,value,term,time|min:2|max:4',
             'payment_methods.*.pay_method_id' => 'required|integer|exists:pay_methods,id|distinct',
             'payment_methods.*.value' => [
                 'bail', 'required', 'decimal:0,2', 'min:0', 'max:999999.99', new PaymentValue

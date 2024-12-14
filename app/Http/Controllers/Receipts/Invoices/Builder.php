@@ -16,11 +16,13 @@ use App\Models\Receipts\Invoices\PayMethod;
 
 class Builder
 {
-    private Establishment $establishment;
+    private string $enviroment;
 
-    private IssuancePoint $issuancePoint;
+    public Establishment $establishment;
 
-    private string $sequential;
+    public IssuancePoint $issuancePoint;
+
+    public string $sequential;
 
     private IdentificationType $identificationType;
 
@@ -46,9 +48,11 @@ class Builder
 
     private string $additional_fields;
 
+    public string $access_key;
+
     public function build(array $validated, User $user): string
     {
-        $this->setAttributes($validated);
+        $this->setAttributes($validated, $user);
         $template = Storage::disk('local')->get('invoice_template.xml');
         // Tax Information
         $invoice = str_replace('{{user_name}}', $user->name, $template);
@@ -57,11 +61,11 @@ class Builder
         $invoice = str_replace('{{establishment_code}}', $this->establishment->code, $invoice);
         $invoice = str_replace('{{issuance_point_code}}', $this->issuancePoint->code, $invoice);
         $invoice = str_replace('{{sequential}}', $this->sequential, $invoice);
-        $invoice = str_replace('{{user_address}}', $user->matrix_address, $invoice);
+        $invoice = str_replace('{{user_matrix_address}}', $user->matrix_address, $invoice);
         // Invoice Information
         $invoice = str_replace('{{issuance_date}}', date('d/m/Y', strtotime($validated['issuance_date'])), $invoice);
         $invoice = str_replace('{{establishment_address}}', $this->establishment->address, $invoice);
-        $invoice = str_replace('{{obliged_accounting}}', false ? 'SI' : 'NO', $invoice);
+        $invoice = str_replace('{{obliged_accounting}}', true ? 'SI' : 'NO', $invoice);
         $invoice = str_replace('{{identification_type_code}}', $this->identificationType->code, $invoice);
         $invoice = str_replace('{{client_name}}', $validated['social_reason'] ?? 'Consumidor Final', $invoice);
         $invoice = str_replace('{{client_identification}}', $validated['identification'] ?? '0000000000001', $invoice);
@@ -73,11 +77,13 @@ class Builder
         $invoice = str_replace('{{total}}', $this->total, $invoice);
         $invoice = str_replace('{{pay_methods}}', $this->pay_methods, $invoice);
         $invoice = str_replace('{{additional_fields}}', $this->additional_fields, $invoice);
+        $invoice = str_replace('{{access_key}}', $this->access_key, $invoice);
         return $invoice;
     }
 
-    private function setAttributes(array $validated): void
+    private function setAttributes(array $validated, User $user): void
     {
+        $this->enviroment = config('app.env') == 'production' ? '2' : '1';
         $this->establishment = Establishment::find($validated['establishment_id']);
         $this->issuancePoint = IssuancePoint::find($validated['issuance_point_id']);
         $this->sequential = $this->sequential();
@@ -86,7 +92,8 @@ class Builder
         $this->total_with_taxes = $this->taxes();
         $this->propine = $this->propine(isset($validated['tip_ten_percent']));
         $this->pay_methods = $this->payMethods($validated['payment_methods']);
-        $this->additional_fields = $this->additionalFields($validated['additional_fields']);
+        $this->additional_fields = $this->additionalFields($validated['additional_fields'] ?? null);
+        $this->access_key = $this->accessKey($this->sequential, $user->ruc, $validated['issuance_date']);
     }
 
     private function sequential(): string
@@ -259,16 +266,16 @@ class Builder
             : "                <pago>\n")
             . "                <formaPago>$payMethod->code</formaPago>\n"
             . "                <total>$total</total>\n";
-            if(isset($pay_method_data['term'])){
-                $term = $pay_method_data['term'];
-                $pay_method .=
-              "                <plazo>$term<plazo>\n";
-            }
-            if(isset($pay_method_data['time'])){
-                $time = $pay_method_data['time'];
-                $pay_method .=
-              "                <unidadTiempo>$time</unidadTiempo>\n";
-            }
+            // if(isset($pay_method_data['term'])){
+            //     $term = $pay_method_data['term'];
+            //     $pay_method .=
+            //   "                <plazo>$term<plazo>\n";
+            // }
+            // if(isset($pay_method_data['time'])){
+            //     $time = $pay_method_data['time'];
+            //     $pay_method .=
+            //   "                <unidadTiempo>$time</unidadTiempo>\n";
+            // }
             $pay_method .=
               "            </pago>" . ($last ? '' : "\n");;
 
@@ -277,9 +284,10 @@ class Builder
         return $pay_methods;
     }
 
-    private function additionalFields(array $additional_fields): string
+    private function additionalFields(?array $additional_fields): string
     {
-        $fields = '';
+        if(is_null($additional_fields)) return '';
+        $fields = "<infoAdicional>\n        ";
         $i = 0;
         $count = count($additional_fields);
         foreach($additional_fields as $additional_field){
@@ -290,6 +298,52 @@ class Builder
                         ? "<campoAdicional nombre=\"$name\">$description</campoAdicional>\n"
                 : "        <campoAdicional nombre=\"$name\">$description</campoAdicional>" . ($last ? '' : "\n");
         }
+        $fields .= "    </infoAdicional>";
         return $fields;
+    }
+
+    private function accessKey(
+        string $sequential,
+        string $identification,
+        string $issuance_date
+    ): string
+    {
+        $access_key = 
+            date('dnY', strtotime($issuance_date))
+            . '01' // document type: 01 => invoice
+            . $identification
+            . $this->enviroment // enviroment type: 1 => test, 2 => production
+            . $this->establishment->code . $this->issuancePoint->code // series: 001001
+            . $sequential
+            . '12345678' // random number code (8 length)
+            . '1' // issuance type: 1 => normal
+            ;
+        $access_key .= $this->calcVerifierDigit($access_key);
+        return $access_key;
+    }
+
+    private function calcVerifierDigit(string $access_key): string
+    {
+        $digits = str_split($access_key);
+        $factors = [7, 6, 5, 4, 3, 2];
+        $factors_pointer = 0;
+
+        $summation = 0;
+
+        for($i = 0; $i < count($digits); $i++){
+            $summation += $digits[$i] * $factors[$factors_pointer];
+            $factors_pointer = ($factors_pointer == 5) ? 0 : $factors_pointer + 1;
+        }
+
+        $module =  $summation % 11;
+        $subtract = 11 - $module;
+        if($subtract == 11){
+            $verifierDigit = 0;
+        } else if($subtract == 10){
+            $verifierDigit = 1;
+        } else {
+            $verifierDigit = $subtract;
+        }
+        return $verifierDigit;
     }
 }

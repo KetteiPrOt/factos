@@ -11,6 +11,8 @@ class Model extends BaseModel
 {
     use HasFactory;
 
+    protected $table = 'receipts';
+
     protected $fillable = [
         'access_key',
         'issuance_date',

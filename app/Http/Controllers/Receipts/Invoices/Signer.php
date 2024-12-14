@@ -59,7 +59,9 @@ class Signer
         $this->path = config('filesystems.disks.local.root') . $this->short_path;
         $this->openssl = $openssl;
         $this->password = $user->certificate->password;
-        $this->issuer = $user->certificate->owner;
+        $this->issuer = 
+            'CN=AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 2,C=EC';
+        // $user->certificate->owner;
 
         $certificate = Storage::disk('local')->get('certificates/' . $user->id);
         Storage::disk('local')->put($this->short_path . '/certificate.p12', $certificate);

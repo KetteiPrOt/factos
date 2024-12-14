@@ -35,7 +35,5 @@
     <detalles>
         {{details}}
     </detalles>
-    <infoAdicional>
-        {{additional_fields}}
-    </infoAdicional>
+    {{additional_fields}}
 </factura>
