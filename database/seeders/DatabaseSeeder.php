@@ -44,12 +44,6 @@ class DatabaseSeeder extends Seeder
             ]);
             Certificate::create(['user_id' => $user0->id]);
 
-            $user1 = User::factory()->create([
-                'name' => 'Test User 2',
-                'email' => 'test_2@example.com',
-            ]);
-            Certificate::create(['user_id' => $user1->id]);
-
             $this->call([
                 ProductSeeder::class,
                 EstablishmentSeeder::class,
