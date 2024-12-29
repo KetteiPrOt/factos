@@ -16,5 +16,24 @@ export interface ProductPost extends Omit<Product, 'id' | 'vat_rate' | 'price'> 
 }
 
 export interface ProductGet extends ProductPost {
+   id?: number
    new?: boolean
+}
+
+export interface ProductSearch extends Omit<Product, 'price' | 'vat_rate'> {
+
+}
+
+export interface ProductDetailsToShow extends Omit<Product, 'price'> {
+    price: number
+    amount: number
+    discount: number
+    totalValue: number
+}
+
+export interface ProductDetails {
+    product_id: number
+    amount: number
+    price: number
+    discount: number
 }

@@ -1,6 +1,7 @@
 <script lang="ts">
     import Select from "$lib/components/Select.svelte";
     import type { Establishments } from "$lib/interfaces/establishments";
+    import type { Origin } from "$lib/interfaces/invoice";
     import type { IssuancePoint } from "$lib/interfaces/issuance_point";
     import type { Option } from "$lib/interfaces/select";
     import { onMount } from "svelte";
@@ -9,7 +10,7 @@
     export let requestFunctions: {
         loadIssuancePoints: (url: string | undefined) => Promise<void>;
     }
-
+    export let bodyOrigin: Writable<Origin>;
     export let issuancePoints: Writable<IssuancePoint[]>;
     export let targetEstab: Writable<number>;
     export let selectedIssuancePoint: Writable<number> = writable(0)
@@ -24,9 +25,20 @@
         const target = e.target as HTMLInputElement;
         const value = target.value;
 
-        console.log(value);
-
+        $bodyOrigin.issuance_date = value;
     }
+
+    $: {
+        $bodyOrigin.establishment_id = $targetEstab;
+    }
+
+    $: {
+        $bodyOrigin.issuance_point_id = $selectedIssuancePoint;
+    }
+
+    // $: {
+    //     console.log($bodyOrigin)
+    // }
 
     // Request Functions
     async function getEstabs () {
@@ -68,7 +80,13 @@
 
     $: {
         $targetEstab;
+        issuancePointsAsOptions = [];
         requestFunctions.loadIssuancePoints(undefined);
+    }
+
+    $: {
+        $targetEstab;
+        $selectedIssuancePoint = 0;
     }
 
     onMount(getEstabs);

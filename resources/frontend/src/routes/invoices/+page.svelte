@@ -1,6 +1,10 @@
 <script lang="ts">
+    import type { Acquirer, AdditionalField, BodyRequestInvoice, Origin, PayMethod, ProductDetails, Totals } from "$lib/interfaces/invoice";
     import type { IssuancePoint } from "$lib/interfaces/issuance_point";
     import type { PaginationIssuancePonints } from "$lib/interfaces/pagination";
+    import type { Product } from "$lib/interfaces/product";
+    import ModalAddPayMethod from "$lib/sections/factura/ModalAddPayMethod.svelte";
+    import ModalEditPayMethod from "$lib/sections/factura/ModalEditPayMethod.svelte";
 	import SectionAdquiriente from "$lib/sections/factura/SectionAdquiriente.svelte";
 	import SectionBtns from "$lib/sections/factura/SectionBtns.svelte";
 	import SectionCamposAdicionales from "$lib/sections/factura/SectionCamposAdicionales.svelte";
@@ -9,12 +13,65 @@
     import SectionOrigen from "$lib/sections/factura/SectionOrigen.svelte";
 	import SectionResumenValores from "$lib/sections/factura/SectionResumenValores.svelte";
     import { onMount } from "svelte";
-    import { writable, type Writable } from "svelte/store";
+    import { writable, type Writable, type Readable, derived } from "svelte/store";
 	import { fade } from "svelte/transition";
 
+    
+    // Section Origin
+    let bodyOrigin: Writable<Origin> = writable({establishment_id: 0, issuance_date: "", issuance_point_id: 0});
     let targetEstab = writable(0);
     const issuancePoints: Writable<IssuancePoint[]> = writable([]);
 
+    // Section Acquirer
+    let bodyAcquirer: Writable<Acquirer> = writable({indentification: "", identification_type_id: 0, social_reason: "", email: ""});
+
+    // Section Details
+    let bodyDetails: Writable<ProductDetails[]> = writable([]);
+
+    // Section Payment Methods
+    let bodyPaymentMethods: Writable<PayMethod[]> = writable([]);
+
+    const indexCurrentPayMethod: Writable<number> = writable(0);
+
+    let modalAddPayMethodVisible = false;
+    let modalEditPayMethodVisible = false;
+
+    function toggleModalAddPayMethod () {
+        modalAddPayMethodVisible = !modalAddPayMethodVisible;
+    }
+
+    function toggleModalEditPayMethod () {
+        modalEditPayMethodVisible = !modalEditPayMethodVisible;
+    }
+    
+
+    // Section Additional Fields
+    let bodyAdditionalFields: Writable<AdditionalField[]> = writable([]);
+
+    // Section Totals
+    let bodyTotals: Writable<number> = writable(0);
+
+    // Body Request
+    let bodyRequest: Readable<BodyRequestInvoice> = derived([bodyOrigin, bodyAcquirer, bodyDetails, bodyPaymentMethods, bodyAdditionalFields, bodyTotals], ([$bodyOrigin]) => ({
+        establishment_id: $bodyOrigin.establishment_id,
+        issuance_date: $bodyOrigin.issuance_date,
+        issuance_point_id: $bodyOrigin.issuance_point_id,
+        identification: $bodyAcquirer.indentification,
+        identification_type_id: $bodyAcquirer.identification_type_id,
+        social_reason: $bodyAcquirer.social_reason,
+        phone_number: $bodyAcquirer.phone_number,
+        address: $bodyAcquirer.address,
+        email: $bodyAcquirer.email,
+        products: $bodyDetails,
+        payment_methods: $bodyPaymentMethods,
+        additional_fields: $bodyAdditionalFields,
+        tip_ten_percent: $bodyTotals
+    }))
+
+    $: {
+        console.log($bodyRequest)
+    }
+        
     // Request Functions 
     async function loadIssuancePoints (url: string | undefined = '/api/issuance-points/'+$targetEstab+'?page=1') {
         if (!$targetEstab) {return}
@@ -44,17 +101,19 @@
     <h2 class="font-bold text-3xl text-center">Factura</h2>
     <div class="flex flex-col gap-7">
         <div class="flex flex-wrap gap-7 w-fit justify-center self-center">
-            <SectionOrigen targetEstab={targetEstab} requestFunctions={requestFunctions} issuancePoints={issuancePoints}/>
-            <SectionAdquiriente />
+            <SectionOrigen {bodyOrigin} {targetEstab} {requestFunctions} {issuancePoints}/>
+            <SectionAdquiriente {bodyAcquirer} />
         </div>
-        <SectionDetalles />
+        <SectionDetalles {bodyDetails} />
         <div class="flex flex-wrap gap-7 w-fit justify-center max-w-full self-center">
             <div class="flex flex-col gap-7 w-fit max-w-full">
-                <SectionFormasDePago />
+                <SectionFormasDePago {bodyPaymentMethods} {indexCurrentPayMethod} {toggleModalAddPayMethod} {toggleModalEditPayMethod} />
                 <SectionCamposAdicionales />
             </div>
             <SectionResumenValores />
         </div>
         <SectionBtns />
     </div>
+    <ModalAddPayMethod {bodyPaymentMethods} visible={modalAddPayMethodVisible} {toggleModalAddPayMethod} />
+    <ModalEditPayMethod {bodyPaymentMethods} {indexCurrentPayMethod} visible={modalEditPayMethodVisible} {toggleModalEditPayMethod} />
 </div>
