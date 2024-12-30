@@ -1,17 +1,10 @@
 <script lang="ts">
     import Select from "$lib/components/Select.svelte";
-import type { Ice } from "$lib/interfaces/ice";
     import type { PayMethod } from "$lib/interfaces/invoice";
     import { PayMethods, Times } from "$lib/interfaces/pay_methods";
-    import type { ProductPost } from "$lib/interfaces/product";
-    import type { Vat } from "$lib/interfaces/vat";
-    import { onMount } from "svelte";
     import { writable, type Writable } from "svelte/store";
-	import { blur, fade, slide } from "svelte/transition";
+	import { blur } from "svelte/transition";
     
-    // export let requestFunctions: {
-    //     loadProducts: () => Promise<void>;
-    // }
     export let visible: boolean;
     export let toggleModalEditPayMethod: ()=>void;
 
@@ -56,7 +49,6 @@ import type { Ice } from "$lib/interfaces/ice";
             let pm = $bodyPaymentMethods[$indexCurrentPayMethod];
             if (pm) {
                 updateCurrentPayMethod(pm.pay_method_id, pm.value, pm.term as number, Times.find(t=>t.name === pm.time)?.id as number)
-                console.log("update currentPayMethod")
             }
         }
     }
@@ -86,14 +78,6 @@ import type { Ice } from "$lib/interfaces/ice";
         if (typeof currentPayMethod.term !== "undefined" || currentPayMethod.term !== null) {
             alertsInput.term = false;
         }
-    }
-
-    $: {
-        console.log(currentPayMethod);
-    }
-
-    $: {
-        console.log($bodyPaymentMethods)
     }
 
     // Validation function

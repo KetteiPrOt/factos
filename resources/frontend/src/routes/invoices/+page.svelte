@@ -1,9 +1,12 @@
 <script lang="ts">
+    import InputPassword from "$lib/components/InputPassword.svelte";
     import type { Acquirer, AdditionalField, BodyRequestInvoice, Origin, PayMethod, ProductDetails, Totals } from "$lib/interfaces/invoice";
     import type { IssuancePoint } from "$lib/interfaces/issuance_point";
     import type { PaginationIssuancePonints } from "$lib/interfaces/pagination";
     import type { Product } from "$lib/interfaces/product";
+    import ModalAddAdditionalField from "$lib/sections/factura/ModalAddAdditionalField.svelte";
     import ModalAddPayMethod from "$lib/sections/factura/ModalAddPayMethod.svelte";
+    import ModalEditAdditionalField from "$lib/sections/factura/ModalEditAdditionalField.svelte";
     import ModalEditPayMethod from "$lib/sections/factura/ModalEditPayMethod.svelte";
 	import SectionAdquiriente from "$lib/sections/factura/SectionAdquiriente.svelte";
 	import SectionBtns from "$lib/sections/factura/SectionBtns.svelte";
@@ -44,9 +47,22 @@
         modalEditPayMethodVisible = !modalEditPayMethodVisible;
     }
     
-
+    
     // Section Additional Fields
     let bodyAdditionalFields: Writable<AdditionalField[]> = writable([]);
+    
+    const indexCurrentAdditionalField: Writable<number> = writable(0);
+        
+    let modalAddAdditionalFieldVisible = false;
+    let modalEditAdditionalFieldVisible = false;
+    
+    function toggleModalAddAdditionalField () {
+        modalAddAdditionalFieldVisible = !modalAddAdditionalFieldVisible;
+    }
+
+    function toggleModalEditAdditionalField () {
+        modalEditAdditionalFieldVisible = !modalEditAdditionalFieldVisible;
+    }
 
     // Section Totals
     let bodyTotals: Writable<number> = writable(0);
@@ -108,7 +124,7 @@
         <div class="flex flex-wrap gap-7 w-fit justify-center max-w-full self-center">
             <div class="flex flex-col gap-7 w-fit max-w-full">
                 <SectionFormasDePago {bodyPaymentMethods} {indexCurrentPayMethod} {toggleModalAddPayMethod} {toggleModalEditPayMethod} />
-                <SectionCamposAdicionales />
+                <SectionCamposAdicionales {bodyAdditionalFields} {indexCurrentAdditionalField} {toggleModalAddAdditionalField} {toggleModalEditAdditionalField} />
             </div>
             <SectionResumenValores />
         </div>
@@ -116,4 +132,6 @@
     </div>
     <ModalAddPayMethod {bodyPaymentMethods} visible={modalAddPayMethodVisible} {toggleModalAddPayMethod} />
     <ModalEditPayMethod {bodyPaymentMethods} {indexCurrentPayMethod} visible={modalEditPayMethodVisible} {toggleModalEditPayMethod} />
+    <ModalAddAdditionalField bodyAdditionalFields={bodyAdditionalFields} visible={modalAddAdditionalFieldVisible} {toggleModalAddAdditionalField} />
+    <ModalEditAdditionalField {bodyAdditionalFields} {indexCurrentAdditionalField} visible={modalEditAdditionalFieldVisible} {toggleModalEditAdditionalField} />
 </div>
