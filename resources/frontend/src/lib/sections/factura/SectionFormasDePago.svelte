@@ -52,7 +52,7 @@
     
 </script>
 
-<div class="flex flex-col border border-[--color-border] p-4 rounded-lg gap-4 box-border w-fit max-w-full place-self-center">
+<div class="flex flex-col border border-[--color-border] p-4 rounded-lg gap-4 box-border max-w-full w-full place-self-center">
     <section class="bg-[--color-theme-1] rounded-md">
         <h3 class="font-medium text-center text-slate-50 p-1.5">Formas de pago</h3>
     </section>

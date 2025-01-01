@@ -1,6 +1,6 @@
 <script lang="ts">
     import InputPassword from "$lib/components/InputPassword.svelte";
-    import type { Acquirer, AdditionalField, BodyRequestInvoice, Origin, PayMethod, ProductDetails, Totals } from "$lib/interfaces/invoice";
+    import type { Acquirer, AdditionalField, BodyRequestInvoice, Origin, PayMethod, ProductDetails, ResumeInvoice, Totals } from "$lib/interfaces/invoice";
     import type { IssuancePoint } from "$lib/interfaces/issuance_point";
     import type { PaginationIssuancePonints } from "$lib/interfaces/pagination";
     import type { Product } from "$lib/interfaces/product";
@@ -65,7 +65,7 @@
     }
 
     // Section Totals
-    let bodyTotals: Writable<number> = writable(0);
+    let bodyTotals: Writable<boolean> = writable(false);
 
     // Body Request
     let bodyRequest: Readable<BodyRequestInvoice> = derived([bodyOrigin, bodyAcquirer, bodyDetails, bodyPaymentMethods, bodyAdditionalFields, bodyTotals], ([$bodyOrigin]) => ({
@@ -86,6 +86,39 @@
 
     $: {
         console.log($bodyRequest)
+    } 
+    $: {
+        console.log($bodyTotals)
+    }
+
+    
+    // Update Functions
+    const resumeInvoice: Writable<ResumeInvoice> = writable({
+        r1: 0, r2: 0, r3: 0, r4: 0, r5: 0, r6: 0, r7: 0,
+        r8: 0, r9: 0, r10: 0, r11: 0, r12: 0, r13: 0, r14: 0
+    })
+    function updateResumeInvoice () {
+        Object.keys($resumeInvoice).forEach((k) => {
+            $resumeInvoice[k as keyof typeof $resumeInvoice] = 0;
+        })
+        $bodyDetails.forEach((p)=>{
+            $resumeInvoice.r1 += (p.price * p.amount) - p.discount;
+            $resumeInvoice.r8 += p.discount;
+        })
+        $resumeInvoice.r2 = $resumeInvoice.r1;
+        $resumeInvoice.r10 = $resumeInvoice.r2 * 0.15; 
+        $resumeInvoice.r14 = $resumeInvoice.r1 + $resumeInvoice.r10;
+        if ($bodyTotals) {
+            $resumeInvoice.r13 = $resumeInvoice.r1 * 0.10;
+            $resumeInvoice.r14 = $resumeInvoice.r1 + $resumeInvoice.r13;
+        }
+    }
+
+    $: {
+        $bodyTotals;
+        if ($bodyDetails) {
+            updateResumeInvoice();
+        }
     }
         
     // Request Functions 
@@ -126,7 +159,7 @@
                 <SectionFormasDePago {bodyPaymentMethods} {indexCurrentPayMethod} {toggleModalAddPayMethod} {toggleModalEditPayMethod} />
                 <SectionCamposAdicionales {bodyAdditionalFields} {indexCurrentAdditionalField} {toggleModalAddAdditionalField} {toggleModalEditAdditionalField} />
             </div>
-            <SectionResumenValores />
+            <SectionResumenValores {resumeInvoice} {bodyTotals} />
         </div>
         <SectionBtns />
     </div>

@@ -127,7 +127,7 @@
     }
 
 </script>
-<div class="flex flex-col border border-[--color-border] p-4 rounded-lg gap-4 box-border w-fit max-w-full place-self-center">
+<div class="flex flex-col border border-[--color-border] p-4 rounded-lg gap-4 box-border w-full max-w-full place-self-center">
     <section class="bg-[--color-theme-1] rounded-md">
         <h3 class="font-medium text-center text-slate-50 p-1.5">Detalles</h3>
     </section>
@@ -143,7 +143,7 @@
     </section>
     <section class="max-w-full">
         <div class="block w-full  rounded-md max-w-full overflow-x-auto">
-            <table class="max-w-full border-collapse text-center">
+            <table class="max-w-full w-full border-collapse text-center">
                 <thead class="bg-[--color-theme-1]">
                     <tr>
                         <th>Código</th>

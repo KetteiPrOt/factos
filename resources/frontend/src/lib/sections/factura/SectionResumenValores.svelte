@@ -1,3 +1,12 @@
+<script lang="ts">
+    import type { ResumeInvoice } from "$lib/interfaces/invoice";
+    import type { Writable } from "svelte/store";
+
+    export let resumeInvoice: Writable<ResumeInvoice>;
+    export let bodyTotals: Writable<boolean>;
+
+</script>
+
 <div class="flex flex-col border border-[--color-border] p-4 rounded-lg gap-4 box-border w-fit max-w-full place-self-center mb-auto">
     <section class="max-w-full">
         <div class="block w-full  rounded-md max-w-full overflow-x-auto">
@@ -11,59 +20,66 @@
                 <tbody>
                     <tr>
                         <td>Subtotal sin impuestos</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r1.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>Subtotal 15%</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r2.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>Subtotal 5%</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r3.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>Subtotal tarifa especial</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r4.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>Subtotal 0%</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r5.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>Subtotal no objeto de iva</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r6.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>Subtotal exento de iva</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r7.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>Total descuento</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r8.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>Valor ICE</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r9.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>IVA 15%</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r10.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>IVA 5%</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r11.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>IVA tarifa especial</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r12.toFixed(2)}</td>
                     </tr>
                     <tr>
-                        <td>Propina 10%</td>
-                        <td>0.00</td>
+                        <td>
+                            <div class="flex flex-row gap-2 place-content-between">
+                                <span class="">
+                                    Propina 10%
+                                </span>
+                                <input bind:checked={$bodyTotals} name="tip_ten_percent" type="checkbox">
+                            </div>
+                        </td>
+                        <td>{$resumeInvoice.r13.toFixed(2)}</td>
                     </tr>
                     <tr>
                         <td>Valor a pagar</td>
-                        <td>0.00</td>
+                        <td>{$resumeInvoice.r14.toFixed(2)}</td>
                     </tr>
                     
                 </tbody>

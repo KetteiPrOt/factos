@@ -36,6 +36,24 @@ export interface Totals {
     tip_ten_percent?: number
 }
 
+// Resume
+export interface ResumeInvoice {
+    r1: number
+    r2: number
+    r3: number
+    r4: number
+    r5: number
+    r6: number
+    r7: number
+    r8: number
+    r9: number
+    r10: number
+    r11: number
+    r12: number
+    r13: number
+    r14: number
+}
+
 
 export interface BodyRequestInvoice {
     //Section Origin
@@ -56,5 +74,5 @@ export interface BodyRequestInvoice {
     //Section Additional Fields
     additional_fields?: AdditionalField[]
     //Section Totals
-    tip_ten_percent?: number
+    tip_ten_percent?: boolean
 }
