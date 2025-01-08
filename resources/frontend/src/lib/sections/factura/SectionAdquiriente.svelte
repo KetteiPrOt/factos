@@ -8,6 +8,14 @@ import type { Acquirer } from "$lib/interfaces/invoice";
     
 
     export let bodyAcquirer: Writable<Acquirer>;
+    export let alertsInputAcquirer: Writable<{
+        identification_type_id: boolean;
+        identification: boolean;
+        social_reason: boolean;
+        phone_number: boolean;
+        address: boolean;
+        email: boolean;
+    }>;
 
     let selectedIdentificationTypeId = writable(0);
 
@@ -21,12 +29,13 @@ import type { Acquirer } from "$lib/interfaces/invoice";
 
     $: {
         $bodyAcquirer.identification_type_id = $selectedIdentificationTypeId
+        $alertsInputAcquirer.identification_type_id = false;
     }
 
     $: {
         if ($selectedIdentificationTypeId === 4) {
             if (inputIdentification) {
-                $bodyAcquirer.indentification = "";
+                $bodyAcquirer.identification = "";
                 inputIdentification.disabled = true;
             }
             if (inputSocialReason) {
@@ -47,18 +56,23 @@ import type { Acquirer } from "$lib/interfaces/invoice";
             }
         } else {
             if (inputIdentification) {
+                $bodyAcquirer.identification = "";
                 inputIdentification.disabled = false;
             }
             if (inputSocialReason) {
+                $bodyAcquirer.social_reason = ""
                 inputSocialReason.disabled = false;
             }
             if (inputPhoneNumber) {
+                $bodyAcquirer.phone_number = ""
                 inputPhoneNumber.disabled = false;
             }
             if (inputAddress) {
+                $bodyAcquirer.address = ""
                 inputAddress.disabled = false;
             }
             if (inputEmail) {
+                $bodyAcquirer.email = ""
                 inputEmail.disabled = false;
             }
             
@@ -67,6 +81,18 @@ import type { Acquirer } from "$lib/interfaces/invoice";
 
     // $: {
     //     console.log($bodyAcquirer)
+    // }
+
+    // Update functions
+    // function updatePhoneNumber (e: Event | InputEvent) {
+    //     const target = e.target as HTMLInputElement;
+    //     if (e instanceof InputEvent) {
+    //         if (e.data !== null) {
+    //             if (isNaN(parseInt(e.data))) {
+    //                 valid = false;
+    //             }
+    //         }
+    //     }
     // }
 
 </script>
@@ -79,28 +105,28 @@ import type { Acquirer } from "$lib/interfaces/invoice";
         <div class="flex flex-row gap-5">
             <label for="tipo_identificacion">Tipo de <br>identificación:</label>
             <div class="flex place-items-center">
-                <Select optionSelected={selectedIdentificationTypeId} options={IdentificationTypes} alert={false} pos={'down'}/>
+                <Select optionSelected={selectedIdentificationTypeId} options={IdentificationTypes} alert={$alertsInputAcquirer.identification_type_id} pos={'down'}/>
             </div>
         </div>
         <div class="flex flex-row gap-5">
             <label for="identificacion">Identificación:</label>
-            <input bind:this={inputIdentification} bind:value={$bodyAcquirer.indentification} name="identificacion" class="w-[205px] outline-none border border-[--color-border] bg-transparent {inputIdentification ? (inputIdentification.disabled ? 'border-stone-300' : '') : ''} rounded-md px-1 ml-auto" type="number">
+            <input bind:this={inputIdentification} bind:value={$bodyAcquirer.identification} name="identificacion" class="w-[205px] outline-none border {$alertsInputAcquirer.identification ? 'border-red-500' : 'border-[--color-border]'} bg-transparent {inputIdentification ? (inputIdentification.disabled ? 'border-stone-300 text-transparent' : '') : ''} rounded-md px-1 ml-auto" type="text" on:input={()=>$alertsInputAcquirer.identification = false}>
         </div>
         <div class="flex flex-row gap-5">
             <label for="razon_social">Razón social:</label>
-            <input bind:this={inputSocialReason} bind:value={$bodyAcquirer.social_reason} name="razon_social" class="w-[205px] outline-none border border-[--color-border] bg-transparent {inputSocialReason ? (inputSocialReason.disabled ? 'border-stone-300' : '') : ''} rounded-md px-1 ml-auto" type="text">
+            <input bind:this={inputSocialReason} bind:value={$bodyAcquirer.social_reason} name="razon_social" class="w-[205px] outline-none border {$alertsInputAcquirer.social_reason ? 'border-red-500' : 'border-[--color-border]'} bg-transparent {inputSocialReason ? (inputSocialReason.disabled ? 'border-stone-300 text-transparent' : '') : ''} rounded-md px-1 ml-auto" type="text" on:input={()=>$alertsInputAcquirer.social_reason = false}>
         </div>
         <div class="flex flex-row gap-5">
             <label for="direccion">Dirección:</label>
-            <input bind:this={inputAddress} bind:value={$bodyAcquirer.address} name="direccion" class="w-[205px] outline-none border border-[--color-border] bg-transparent {inputAddress ? (inputAddress.disabled ? 'border-stone-300' : '') : ''} rounded-md px-1 ml-auto" type="text">
+            <input bind:this={inputAddress} bind:value={$bodyAcquirer.address} name="direccion" class="w-[205px] outline-none border {$alertsInputAcquirer.address ? 'border-red-500' : 'border-[--color-border]'} bg-transparent {inputAddress ? (inputAddress.disabled ? 'border-stone-300 text-transparent' : '') : ''} rounded-md px-1 ml-auto" type="text" on:input={()=>$alertsInputAcquirer.address = false}>
         </div>
         <div class="flex flex-row gap-5">
             <label for="telefono">Teléfono:</label>
-            <input bind:this={inputPhoneNumber} bind:value={$bodyAcquirer.phone_number} name="telefono" class="w-[205px] outline-none border border-[--color-border] bg-transparent {inputPhoneNumber ? (inputPhoneNumber.disabled ? 'border-stone-300' : '') : ''} rounded-md px-1 ml-auto" type="number">
+            <input bind:this={inputPhoneNumber} bind:value={$bodyAcquirer.phone_number} name="telefono" class="w-[205px] outline-none border {$alertsInputAcquirer.phone_number ? 'border-red-500' : 'border-[--color-border]'} bg-transparent {inputPhoneNumber ? (inputPhoneNumber.disabled ? 'border-stone-300 text-transparent' : '') : ''} rounded-md px-1 ml-auto" type="text" on:input={(e)=>{$alertsInputAcquirer.phone_number = false}}>
         </div>
         <div class="flex flex-row gap-5">
             <label for="correo">Correo:</label>
-            <input bind:this={inputEmail} bind:value={$bodyAcquirer.email} name="correo" class="w-[205px] outline-none border border-[--color-border] bg-transparent {inputEmail ? (inputEmail.disabled ? 'border-stone-300' : '') : ''} rounded-md px-1 ml-auto" type="text">
+            <input bind:this={inputEmail} bind:value={$bodyAcquirer.email} name="correo" class="w-[205px] outline-none border {$alertsInputAcquirer.email ? 'border-red-500' : 'border-[--color-border]'} bg-transparent {inputEmail ? (inputEmail.disabled ? 'border-stone-300 text-transparent' : '') : ''} rounded-md px-1 ml-auto" type="text" on:input={()=>$alertsInputAcquirer.email = false}>
         </div>
     </section>
 </div>

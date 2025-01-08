@@ -5,7 +5,7 @@ export interface Origin {
 }
 
 export interface Acquirer {
-    indentification: string
+    identification: string
     identification_type_id: number
     social_reason: string
     phone_number?: string | null
@@ -74,5 +74,5 @@ export interface BodyRequestInvoice {
     //Section Additional Fields
     additional_fields?: AdditionalField[]
     //Section Totals
-    tip_ten_percent?: boolean
+    tip_ten_percent?: boolean | null
 }

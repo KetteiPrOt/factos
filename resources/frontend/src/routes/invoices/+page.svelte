@@ -26,7 +26,7 @@
     const issuancePoints: Writable<IssuancePoint[]> = writable([]);
 
     // Section Acquirer
-    let bodyAcquirer: Writable<Acquirer> = writable({indentification: "", identification_type_id: 0, social_reason: "", email: ""});
+    let bodyAcquirer: Writable<Acquirer> = writable({identification: "", identification_type_id: 0, social_reason: "", email: ""});
 
     // Section Details
     let bodyDetails: Writable<ProductDetails[]> = writable([]);
@@ -65,14 +65,14 @@
     }
 
     // Section Totals
-    let bodyTotals: Writable<boolean> = writable(false);
+    let bodyTotals: Writable<boolean | undefined | null> = writable(false);
 
     // Body Request
     let bodyRequest: Readable<BodyRequestInvoice> = derived([bodyOrigin, bodyAcquirer, bodyDetails, bodyPaymentMethods, bodyAdditionalFields, bodyTotals], ([$bodyOrigin]) => ({
         establishment_id: $bodyOrigin.establishment_id,
         issuance_date: $bodyOrigin.issuance_date,
         issuance_point_id: $bodyOrigin.issuance_point_id,
-        identification: $bodyAcquirer.indentification,
+        identification: $bodyAcquirer.identification,
         identification_type_id: $bodyAcquirer.identification_type_id,
         social_reason: $bodyAcquirer.social_reason,
         phone_number: $bodyAcquirer.phone_number,
@@ -84,12 +84,12 @@
         tip_ten_percent: $bodyTotals
     }))
 
-    $: {
-        console.log($bodyRequest)
-    } 
-    $: {
-        console.log($bodyTotals)
-    }
+    // $: {
+    //     console.log($bodyRequest)
+    // } 
+    // $: {
+    //     console.log($bodyTotals)
+    // }
 
     
     // Update Functions
@@ -120,7 +120,80 @@
             updateResumeInvoice();
         }
     }
-        
+
+    
+    function getCookies () {
+        let cookies = document.cookie.split(";");
+        let dict: {[key:string]: string} = {};
+        cookies.forEach(cookie => {
+            let [key, value] = cookie.split("=");
+            key = key.trim();
+            value = decodeURIComponent(value);
+            dict[key] = value;
+        })
+
+        return dict
+    }
+
+    // Alerts Input
+    const alertsInputOrigin = writable({
+        establishment_id: false,
+        issuance_date: false,
+        issuance_point_id: false
+    });
+
+    const alertsInputAcquirer = writable({
+        identification_type_id: false,
+        identification: false,
+        social_reason: false,
+        phone_number: false,
+        address: false,
+        email: false,
+    });
+
+    let alertProducts = false;
+    let alertPayMethods = false;
+
+    $: {
+        if ($bodyDetails.length > 0) {
+            alertProducts = false;
+        }
+    }
+
+    $: {
+        if ($bodyPaymentMethods.length > 0) {
+            alertPayMethods = false;
+        }
+    }
+
+    $: {
+        console.log($bodyAcquirer.phone_number)
+    }
+
+    function checkPhoneNumber () {
+        let valid = true;
+        if ($bodyAcquirer.phone_number) {
+            const phoneLength = $bodyAcquirer.phone_number.length;
+            console.log($alertsInputAcquirer.phone_number)
+            if (phoneLength === 10) {
+                Array.from($bodyAcquirer.phone_number).forEach((char) => {
+                    if (isNaN(parseInt(char))) {
+                        valid = false;
+                    } 
+                    console.log(isNaN(parseInt(char)))
+                })
+            } else {
+                valid = false;
+            }
+        } else {
+            valid = false;
+        }
+
+        return valid
+    }
+
+    const emailRegex = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+    
     // Request Functions 
     async function loadIssuancePoints (url: string | undefined = '/api/issuance-points/'+$targetEstab+'?page=1') {
         if (!$targetEstab) {return}
@@ -138,6 +211,84 @@
         }
     }
 
+    let loadingSendInvoice = false;
+    async function sendInvoice () {
+        if (loadingSendInvoice) { return };
+        let valid = true;
+
+        if (!$bodyOrigin.establishment_id) { $alertsInputOrigin.establishment_id = true ; valid = false };
+        if (!$bodyOrigin.issuance_date) { $alertsInputOrigin.issuance_date = true ; valid = false };
+        if (!$bodyOrigin.issuance_point_id) { $alertsInputOrigin.issuance_point_id = true ; valid = false};
+
+        if (!$bodyAcquirer.identification_type_id) { $alertsInputAcquirer.identification_type_id = true ; valid = false}
+        else if ($bodyAcquirer.identification_type_id !== 4) {
+            if (!$bodyAcquirer.identification) { $alertsInputAcquirer.identification = true ; valid = false};
+            if (!$bodyAcquirer.social_reason) { $alertsInputAcquirer.social_reason = true ; valid = false};
+            if (!$bodyAcquirer.address) { $alertsInputAcquirer.address = true ; valid = false};
+            if (!checkPhoneNumber()) { $alertsInputAcquirer.phone_number = true ; valid = false};
+            if (!emailRegex.test($bodyAcquirer.email)) { $alertsInputAcquirer.email = true ; valid = false};
+        } else {
+            $alertsInputAcquirer.identification = false;
+            $alertsInputAcquirer.social_reason = false;
+            $alertsInputAcquirer.address = false;
+            $alertsInputAcquirer.phone_number = false;
+            $alertsInputAcquirer.email = false;
+            $bodyAcquirer.identification = ".";
+            $bodyAcquirer.social_reason = ".";
+            $bodyAcquirer.email = ".";
+            $bodyAcquirer.address = ".";
+            $bodyAcquirer.phone_number = "0";
+        }
+        
+        if ($bodyDetails.length < 1) { alertProducts = true ; valid = false};
+        
+        if ($bodyPaymentMethods.length < 1) { alertPayMethods = true ; valid = false};
+
+        if (!$bodyTotals) { $bodyTotals = undefined };
+
+        Object.values($alertsInputOrigin).forEach(value => {
+            if (value) {
+                valid = false;
+            };
+        });
+        Object.values($alertsInputAcquirer).forEach(value => {
+            if (value) {
+                valid = false;
+            };
+        });
+        Object.entries($alertsInputOrigin).forEach(([key, value]) => {
+            console.log(key, ": ", value)
+        });
+        Object.entries($alertsInputAcquirer).forEach(([key, value]) => {
+            console.log(key, ": ", value)
+        });
+
+        console.log("alertProducts: ", alertProducts);
+        console.log("alertPayMethods: ", alertPayMethods);
+
+        console.log("Valid: ", valid)
+
+        if (!valid) { console.log("Invalid Invoice") ; return }
+
+        loadingSendInvoice = true;
+        const res = await fetch('/api/receipts/invoices', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Xsrf-Token': getCookies()['XSRF-TOKEN']
+            },
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify($bodyRequest)
+        })
+
+        const data: {message: string} = await res.json();
+
+        loadingSendInvoice = false;
+
+        
+    }
+
     const requestFunctions = {
         loadIssuancePoints: loadIssuancePoints
     }
@@ -150,8 +301,8 @@
     <h2 class="font-bold text-3xl text-center">Factura</h2>
     <div class="flex flex-col gap-7">
         <div class="flex flex-wrap gap-7 w-fit justify-center self-center">
-            <SectionOrigen {bodyOrigin} {targetEstab} {requestFunctions} {issuancePoints}/>
-            <SectionAdquiriente {bodyAcquirer} />
+            <SectionOrigen {bodyOrigin} {targetEstab} {requestFunctions} {issuancePoints} {alertsInputOrigin} />
+            <SectionAdquiriente {bodyAcquirer} {alertsInputAcquirer} />
         </div>
         <SectionDetalles {bodyDetails} />
         <div class="flex flex-wrap gap-7 w-fit justify-center max-w-full self-center">
@@ -161,7 +312,28 @@
             </div>
             <SectionResumenValores {resumeInvoice} {bodyTotals} />
         </div>
-        <SectionBtns />
+    
+        <div class="flex flex-col place-items-center">
+            {#if Object.values($alertsInputOrigin).some(alert => alert)}
+            <p transition:fade class="border border-red-500 text-red-500 rounded-md p-3">
+                Errores encontrados en la sección Origen
+            </p>            
+            {:else if Object.values($alertsInputAcquirer).some(alert => alert)}
+            <p transition:fade class="border border-red-500 text-red-500 rounded-md p-3">
+                Errores encontrados en la sección Adquiriente
+            </p>            
+            {:else if alertProducts}
+            <p transition:fade class="border border-red-500 text-red-500 rounded-md p-3">
+                Necesita seleccionar un producto antes de continuar
+            </p>
+            {:else if alertPayMethods}
+            <p transition:fade class="border border-red-500 text-red-500 rounded-md p-3">
+                Necesita añadir un método de pago antes de continuar
+            </p>
+            {/if}
+        </div>
+
+        <SectionBtns {sendInvoice} />
     </div>
     <ModalAddPayMethod {bodyPaymentMethods} visible={modalAddPayMethodVisible} {toggleModalAddPayMethod} />
     <ModalEditPayMethod {bodyPaymentMethods} {indexCurrentPayMethod} visible={modalEditPayMethodVisible} {toggleModalEditPayMethod} />

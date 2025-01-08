@@ -3,7 +3,7 @@
     import type { Writable } from "svelte/store";
 
     export let resumeInvoice: Writable<ResumeInvoice>;
-    export let bodyTotals: Writable<boolean>;
+    export let bodyTotals: Writable<boolean | undefined | null>;
 
 </script>
 

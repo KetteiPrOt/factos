@@ -14,6 +14,12 @@
     export let issuancePoints: Writable<IssuancePoint[]>;
     export let targetEstab: Writable<number>;
     export let selectedIssuancePoint: Writable<number> = writable(0)
+    export let alertsInputOrigin: Writable<{
+        establishment_id: boolean, 
+        issuance_date: boolean, 
+        issuance_point_id: boolean
+    }>;
+
     let estabs: Option[] = [];
     let issuancePointsAsOptions: Option[] = [];
 
@@ -26,14 +32,17 @@
         const value = target.value;
 
         $bodyOrigin.issuance_date = value;
+        $alertsInputOrigin.issuance_date = false;
     }
 
     $: {
         $bodyOrigin.establishment_id = $targetEstab;
+        $alertsInputOrigin.establishment_id = false;
     }
 
     $: {
         $bodyOrigin.issuance_point_id = $selectedIssuancePoint;
+        $alertsInputOrigin.issuance_point_id = false;
     }
 
     // $: {
@@ -101,17 +110,17 @@
         <div class="flex flex-row gap-5">
             <label for="establecimiento">Establecimiento:</label>
             <div class="ml-auto z-[31]">
-                <Select alert={false} optionSelected={targetEstab} options={estabs} pos="down" />
+                <Select alert={$alertsInputOrigin.establishment_id} optionSelected={targetEstab} options={estabs} pos="down" />
             </div>
         </div>
         <div class="flex flex-row gap-5">
             <label for="fecha_emision">Fecha de emisión:</label>
-            <input bind:this={dateInput} min="2024-11-25" name="fecha_emision" class="border border-[--color-border] bg-transparent rounded-md px-1 ml-auto w-[205px] place-self-center outline-none" type="date" on:change={(e)=>updateDate(e)}>
+            <input bind:this={dateInput} min="2024-11-25" name="fecha_emision" class="border {$alertsInputOrigin.issuance_date ? 'border-red-500' :'border-[--color-border]'} bg-transparent rounded-md px-1 ml-auto w-[205px] place-self-center outline-none text-center" type="date" on:change={(e)=>updateDate(e)}>
         </div>
         <div class="flex flex-row gap-5">
             <label for="punto_emision">Punto de emisión:</label>
             <div class="ml-auto">
-                <Select alert={false} optionSelected={selectedIssuancePoint} options={issuancePointsAsOptions} pos="down" />
+                <Select alert={$alertsInputOrigin.issuance_point_id} optionSelected={selectedIssuancePoint} options={issuancePointsAsOptions} pos="down" />
             </div>
         </div>
         <div class="flex flex-row gap-5">
