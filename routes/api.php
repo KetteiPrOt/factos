@@ -88,4 +88,5 @@ Route::middleware(['auth:sanctum'])->get('/pay-methods', [PayMethodController::c
 
 Route::middleware(['auth:sanctum'])->controller(InvoiceController::class)->group(function(){
     Route::post('/receipts/invoices', 'issue')->name('invoices.issue');
+    Route::get('/receipts/invoices', 'index')->name('invoices.index');
 });

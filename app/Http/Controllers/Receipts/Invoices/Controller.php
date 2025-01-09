@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Receipts\Invoices;
 
 use App\Models\Receipts\Model as Receipt;
 use App\Http\Controllers\Controller as BaseController;
+use App\Http\Requests\Invoices\Receipts\IndexRequest;
 use App\Http\Requests\Receipts\Invoices\IssueRequest;
+use App\Http\Resources\Receipts\Invoices\Index\PaginatedCollection;
 use App\Models\Receipts\Type as ReceiptType;
 use Exception;
 use SoapClient;
-use stdClass;
 
 class Controller extends BaseController
 {
@@ -54,5 +55,18 @@ class Controller extends BaseController
         ]);
 
         return response(['message' => $status], 200);
+    }
+
+    public function index(IndexRequest $request)
+    {
+        $validated = $request->validated();
+        $receipts = Receipt::where('user_id', $this->authUser()->id);
+        if(isset($validated['date_from'])){
+            // set where
+        }
+        return new PaginatedCollection(
+            $receipts->orderBy('issuance_date')->paginate(10)->withQueryString()
+        );
+        return 'Indice de facturas';
     }
 }

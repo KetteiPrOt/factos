@@ -16,6 +16,10 @@ use App\Models\Receipts\Invoices\PayMethod;
 
 class Builder
 {
+    /**
+     * According the table 4 of the SRI document:
+     * Testing => '1'; Production => '2';
+     */
     private string $enviroment;
 
     public Establishment $establishment;
@@ -309,7 +313,7 @@ class Builder
     ): string
     {
         $access_key = 
-            date('dnY', strtotime($issuance_date))
+            date('dmY', strtotime($issuance_date))
             . '01' // document type: 01 => invoice
             . $identification
             . $this->enviroment // enviroment type: 1 => test, 2 => production

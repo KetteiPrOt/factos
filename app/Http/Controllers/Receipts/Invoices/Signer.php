@@ -12,12 +12,14 @@ class Signer
     private string $issuer;
 
     /**
-     * Directory where all the files will be created temporaly
+     * Directory shorted where all the files will be created temporaly
+     * Exmaple: '/certificates/{$user_id}.d';
      */
     private string $short_path;
 
     /**
      * Directory where all the files will be created temporaly
+     * Example: * Exmaple: '{$app_root}/storage/app/private/certificates/{$user_id}.d';
      */
     private string $path;
 
@@ -53,15 +55,13 @@ class Signer
         'SignedInfo.txt'
     ];
 
-    public function sign(string $raw, User $user, string $openssl) // : string
+    public function sign(string $raw, User $user, string $openssl): string
     {
         $this->short_path = '/certificates' . "/$user->id.d";
         $this->path = config('filesystems.disks.local.root') . $this->short_path;
         $this->openssl = $openssl;
         $this->password = $user->certificate->password;
-        $this->issuer = 
-            'CN=AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 2,C=EC';
-        // $user->certificate->owner;
+        $this->issuer = $user->certificate->owner;
 
         $certificate = Storage::disk('local')->get('certificates/' . $user->id);
         Storage::disk('local')->put($this->short_path . '/certificate.p12', $certificate);
@@ -192,7 +192,6 @@ class Signer
                 $SignedProperties .= '<etsi:SigningTime>';
 
                     $SignedProperties .= date(DATE_ATOM); // '2016-12-24T13:46:43-05:00'
-                    // $SignedProperties .= '2016-12-24T13:46:44-05:00';
 
                 $SignedProperties .= '</etsi:SigningTime>';
                 $SignedProperties .= '<etsi:SigningCertificate>';
@@ -377,19 +376,37 @@ class Signer
         ];
     }
 
+    // // Example
+    // private function generateRandomNumbers(): array
+    // {
+    //     return [
+    //         // In hash
+    //         'Certificate' => 1666089,
+    //         'Signature' => 833293,
+    //         'SignedProperties' => 269335,
+    //         // Out hash
+    //         'SignedInfo' => 288469,
+    //         'SignedPropertiesID' => 277260,
+    //         'Reference_ID' => 723993,
+    //         'SignatureValue' => 977493,
+    //         'Object' => 597308
+    //     ];
+    // }
+
     private function generateRandomNumbers(): array
     {
+        $faker = fake();
         return [
             // In hash
-            'Certificate' => /*fake()->numberBetween(990, 999990),*/1666089,
-            'Signature' => /*fake()->numberBetween(990, 999990),*/833293,
-            'SignedProperties' => /*fake()->numberBetween(990, 999990),*/269335,
+            'Certificate' => $faker->numberBetween(990, 999990),
+            'Signature' => $faker->numberBetween(990, 999990),
+            'SignedProperties' => $faker->numberBetween(990, 999990),
             // Out hash
-            'SignedInfo' => /*fake()->numberBetween(990, 999990),*/288469,
-            'SignedPropertiesID' => /*fake()->numberBetween(990, 999990),*/277260,
-            'Reference_ID' => /*fake()->numberBetween(990, 999990),*/723993,
-            'SignatureValue' => /*fake()->numberBetween(990, 999990),*/977493,
-            'Object' =>  /*fake()->numberBetween(990, 999990)*/597308
+            'SignedInfo' => $faker->numberBetween(990, 999990),
+            'SignedPropertiesID' => $faker->numberBetween(990, 999990),
+            'Reference_ID' => $faker->numberBetween(990, 999990),
+            'SignatureValue' => $faker->numberBetween(990, 999990),
+            'Object' =>  $faker->numberBetween(990, 999990)
         ];
     }
 

@@ -50,22 +50,21 @@ class IssueRequest extends FormRequest
             'identification_type_id' => 'required|integer|exists:identification_types,id',
             'identification' => [
                 'bail', "required_unless:identification_type_id,$finalConsumer",
+                "exclude_if:identification_type_id,$finalConsumer",
                 'string', 'min:10', 'max:13', new NumericDigits, new ExactSizes(10, 13),
-                "exclude_if:identification_type_id,$finalConsumer"
             ],
             'social_reason' => [
-                "required_unless:identification_type_id,$finalConsumer", 'string', 'max:255',
-                "exclude_if:identification_type_id,$finalConsumer"
+                "required_unless:identification_type_id,$finalConsumer",
+                "exclude_if:identification_type_id,$finalConsumer", 'string', 'max:255',
             ],
             'phone_number' => [
-                'bail', 'string', 'size:10', new NumericDigits,
-                "exclude_if:identification_type_id,$finalConsumer"
+                'bail', "exclude_if:identification_type_id,$finalConsumer", 'string', 'size:10', new NumericDigits,
             ],
             'address' => "string|max:255|exclude_if:identification_type_id,$finalConsumer",
             'email' => [
                 "required_unless:identification_type_id,$finalConsumer",
+                "exclude_if:identification_type_id,$finalConsumer",
                 'string', 'max:255', 'email:rfc,strict',
-                "exclude_if:identification_type_id,$finalConsumer"
             ],
             // Details Section
             'products' => 'required|array|max:100',
@@ -93,7 +92,7 @@ class IssueRequest extends FormRequest
                 'string', Rule::in(['Años', 'Meses', 'Días'])
             ],
             // Additional Fields Section
-            'additional_fields' => 'array|max:10',
+            'additional_fields' => 'array|min:1|max:10',
             'additional_fields.*' => 'array:name,description|size:2',
             'additional_fields.*.name' => 'required|string|max:255',
             'additional_fields.*.description' => 'required|string|max:255',
