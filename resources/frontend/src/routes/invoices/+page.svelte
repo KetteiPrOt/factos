@@ -49,7 +49,7 @@
     
     
     // Section Additional Fields
-    let bodyAdditionalFields: Writable<AdditionalField[]> = writable([]);
+    let bodyAdditionalFields: Writable<AdditionalField[] | undefined> = writable([]);
     
     const indexCurrentAdditionalField: Writable<number> = writable(0);
         
@@ -233,11 +233,11 @@
             $alertsInputAcquirer.address = false;
             $alertsInputAcquirer.phone_number = false;
             $alertsInputAcquirer.email = false;
-            $bodyAcquirer.identification = ".";
-            $bodyAcquirer.social_reason = ".";
-            $bodyAcquirer.email = ".";
-            $bodyAcquirer.address = ".";
-            $bodyAcquirer.phone_number = "0";
+            $bodyAcquirer.identification = "";
+            $bodyAcquirer.social_reason = "";
+            $bodyAcquirer.email = "";
+            $bodyAcquirer.address = "";
+            $bodyAcquirer.phone_number = "";
         }
         
         if ($bodyDetails.length < 1) { alertProducts = true ; valid = false};
@@ -245,6 +245,9 @@
         if ($bodyPaymentMethods.length < 1) { alertPayMethods = true ; valid = false};
 
         if (!$bodyTotals) { $bodyTotals = undefined };
+        if (Array.isArray($bodyAdditionalFields)) {
+            if ($bodyAdditionalFields.length === 0) {$bodyAdditionalFields = undefined};
+        };
 
         Object.values($alertsInputOrigin).forEach(value => {
             if (value) {
@@ -337,6 +340,6 @@
     </div>
     <ModalAddPayMethod {bodyPaymentMethods} visible={modalAddPayMethodVisible} {toggleModalAddPayMethod} />
     <ModalEditPayMethod {bodyPaymentMethods} {indexCurrentPayMethod} visible={modalEditPayMethodVisible} {toggleModalEditPayMethod} />
-    <ModalAddAdditionalField bodyAdditionalFields={bodyAdditionalFields} visible={modalAddAdditionalFieldVisible} {toggleModalAddAdditionalField} />
+    <ModalAddAdditionalField {bodyAdditionalFields} visible={modalAddAdditionalFieldVisible} {toggleModalAddAdditionalField} />
     <ModalEditAdditionalField {bodyAdditionalFields} {indexCurrentAdditionalField} visible={modalEditAdditionalFieldVisible} {toggleModalEditAdditionalField} />
 </div>

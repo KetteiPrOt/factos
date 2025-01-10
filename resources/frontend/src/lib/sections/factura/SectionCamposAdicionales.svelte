@@ -6,7 +6,7 @@
     import type { Writable } from "svelte/store";
     import { fade } from "svelte/transition";
 
-    export let bodyAdditionalFields: Writable<AdditionalField[]>;
+    export let bodyAdditionalFields: Writable<AdditionalField[] | undefined>;
     export let indexCurrentAdditionalField: Writable<number>;
     export let toggleModalAddAdditionalField: () => void;
     export let toggleModalEditAdditionalField: () => void;

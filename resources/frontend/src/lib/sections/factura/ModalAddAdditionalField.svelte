@@ -6,7 +6,7 @@
     export let visible: boolean;
     export let toggleModalAddAdditionalField: ()=>void;
 
-    export let bodyAdditionalFields: Writable<AdditionalField[]>;
+    export let bodyAdditionalFields: Writable<AdditionalField[] | undefined>;
 
     let alertsInput = {
         name: false,
@@ -55,7 +55,7 @@
 
     // Add function
     function addNewAdditionalField () {
-        if (validateNewAdditionalField()) {
+        if (validateNewAdditionalField() && Array.isArray($bodyAdditionalFields)) {
             $bodyAdditionalFields = [...$bodyAdditionalFields, newAdditionalField];
             clearNewAdditionalField();
             toggleModalAddAdditionalField();
