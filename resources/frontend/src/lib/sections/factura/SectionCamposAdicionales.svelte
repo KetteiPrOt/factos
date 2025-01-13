@@ -17,11 +17,16 @@
     function deleteAdditionalField (index: number) {
         if (typeof index !== "number") {return};
 
-        $bodyAdditionalFields = [...$bodyAdditionalFields.filter(af => {
-            if ($bodyAdditionalFields.indexOf(af) !== index) {
-                return true;
-            };
-        })];
+        if (typeof $bodyAdditionalFields !== "undefined" && Array.isArray($bodyAdditionalFields)) {
+            $bodyAdditionalFields = [...$bodyAdditionalFields.filter(af => {
+                if (typeof $bodyAdditionalFields !== "undefined") {
+                    if ($bodyAdditionalFields?.indexOf(af) !== index) {
+                        return true;
+
+                    }
+                };
+            })];
+        }
     };
 
     function selectAdditionalField (index: number) {
@@ -53,25 +58,27 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {#if Array.isArray($bodyAdditionalFields)}
                     {#each $bodyAdditionalFields as additionalField}
                     <tr in:fade={{delay: ($bodyAdditionalFields.indexOf(additionalField)*50)}} class="hover:bg-slate-300" >
                         <td>
-                            <button class="w-full h-full p-2" on:click={(e)=>selectAdditionalField($bodyAdditionalFields.indexOf(additionalField))}>
+                            <button class="w-full h-full p-2" on:click={(e)=>selectAdditionalField($bodyAdditionalFields ? $bodyAdditionalFields.indexOf(additionalField) : 0)}>
                                 {additionalField.name}
                             </button>
                         </td>
                         <td>
-                            <button class="w-full h-full p-2" on:click={(e)=>selectAdditionalField($bodyAdditionalFields.indexOf(additionalField))}>
+                            <button class="w-full h-full p-2" on:click={(e)=>selectAdditionalField($bodyAdditionalFields ? $bodyAdditionalFields.indexOf(additionalField) : 0)}>
                                 {additionalField.description}
                             </button>
                         </td>
                         <td>
-                            <button class="flex w-full h-full place-content-center place-items-center p-2 text-[--color-theme-1] hover:text-blue-500" on:click={() => deleteAdditionalField($bodyAdditionalFields.indexOf(additionalField))}>
+                            <button class="flex w-full h-full place-content-center place-items-center p-2 text-[--color-theme-1] hover:text-blue-500" on:click={() => deleteAdditionalField($bodyAdditionalFields ? $bodyAdditionalFields.indexOf(additionalField) : 0)}>
                                 <Icon src={BiTrash} size={22} />
                             </button>
                         </td>
                     </tr>
-                    {/each}
+                    {/each}                        
+                    {/if}
                     
                 </tbody>
             </table>

@@ -10,6 +10,8 @@
 
     export let bodyDetails: Writable<ProductDetails[]>;
 
+    export let success: boolean;
+
     let listProducts: ProductSearch[] = []
     let selectedProduct = writable(0);
 
@@ -113,8 +115,14 @@
             }
             selectedProduct.set(0);
         }
-
+        
     } 
+
+    $: {
+        if (success) {
+            listProductsDetails = [];
+        };
+    }
 
     $: {
         bodyDetails.set([])
@@ -125,6 +133,7 @@
             $bodyDetails = [...$bodyDetails, {product_id: p.id, amount: p.amount, price: p.price, discount: p.discount}]
         });
     }
+
 
 </script>
 <div class="flex flex-col border border-[--color-border] p-4 rounded-lg gap-4 box-border w-full max-w-full place-self-center">
