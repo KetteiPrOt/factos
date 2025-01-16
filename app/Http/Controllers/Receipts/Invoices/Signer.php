@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Receipts\Invoices;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Signer
 {
@@ -61,10 +62,10 @@ class Signer
         $this->path = config('filesystems.disks.local.root') . $this->short_path;
         $this->openssl = $openssl;
         $this->password = $user->certificate->password;
-        $this->issuer = $user->certificate->owner;
 
-        $certificate = Storage::disk('local')->get('certificates/' . $user->id);
+        $certificate = Storage::disk('local')->get($this->short_path . "/$user->id");
         Storage::disk('local')->put($this->short_path . '/certificate.p12', $certificate);
+        Storage::disk('local')->put($this->short_path . '/invoice.xml', $raw);
 
         $this->extractFiles($this->password);
 
@@ -74,9 +75,9 @@ class Signer
 
         $signed_invoice = str_replace('</factura>', $XAdES_BES, $raw);
 
-        foreach($this->generatedFiles as $generatedFile){
-            Storage::disk('local')->delete($this->short_path . '/' . $generatedFile);
-        }
+        // foreach($this->generatedFiles as $generatedFile){
+        //     Storage::disk('local')->delete($this->short_path . '/' . $generatedFile);
+        // }
 
         return $signed_invoice;
     }
@@ -125,6 +126,13 @@ class Signer
         )['output'][0]; // "serial=272E6866"
         $output = str_replace("serial=", '', $output); // Hexadecimal "272E6866"
         $this->serial = intval($output, 16);
+
+        // Extract Issuer
+        $output = $this->execute(
+            "$this->openssl x509 -noout -issuer -in $this->path/certificate.pem"
+        )['output'][0]; // 'issuer= /C=EC/O=SECURITY DATA S.A. 2/OU=ENTIDAD DE CERTIFICACION DE INFORMACION/CN=AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA'
+        $output = $this->extractIssuer($output);
+        $this->issuer = $output;
 
         // Obtain SHA1 hash from invoice
         $invoice = Storage::disk('local')->get($this->short_path . '/invoice.xml');
@@ -176,6 +184,14 @@ class Signer
         $exponent = (mb_strlen($exponent) % 2) > 0 ? '0' . $exponent : $exponent;
         $exponent = hex2bin($exponent);
         $this->exponent_b64 = base64_encode($exponent);
+    }
+
+    private function extractIssuer(string $raw): string
+    {
+        $issuer = str_replace("issuer= /", '', $raw);
+        $issuer = array_reverse(Str::of($issuer)->explode('/')->toArray());
+        $issuer = implode(',', $issuer);
+        return $issuer;
     }
 
     private function constructSign(): string

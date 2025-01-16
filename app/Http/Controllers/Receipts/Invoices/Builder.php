@@ -156,6 +156,7 @@ class Builder
         $this->total_discount = bcadd($this->total_discount, $data['discount'], 2);
 
         $total_without_taxation = bcmul($data['price'], $data['amount'], 2);
+        $total_without_taxation = bcsub($total_without_taxation, $data['discount'], 2);
         $this->total_without_taxation = bcadd($this->total_without_taxation, $total_without_taxation, 2);
 
         $detail = str_replace('{{total_without_taxation}}', $total_without_taxation, $detail);
@@ -293,14 +294,13 @@ class Builder
         if(is_null($additional_fields)) return '';
         $fields = "<infoAdicional>\n        ";
         $i = 0;
-        $count = count($additional_fields);
         foreach($additional_fields as $additional_field){
-            $first = $i == 0; $last = $i == ($count - 1); $i++;
+            $first = $i == 0; $i++;
             $name = $additional_field['name'];
             $description = $additional_field['description'];
             $fields .= $first
                         ? "<campoAdicional nombre=\"$name\">$description</campoAdicional>\n"
-                : "        <campoAdicional nombre=\"$name\">$description</campoAdicional>" . ($last ? '' : "\n");
+                : "        <campoAdicional nombre=\"$name\">$description</campoAdicional>\n";
         }
         $fields .= "    </infoAdicional>";
         return $fields;

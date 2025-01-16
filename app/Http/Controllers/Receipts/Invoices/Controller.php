@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\Invoices\Receipts\IndexRequest;
 use App\Http\Requests\Receipts\Invoices\IssueRequest;
 use App\Http\Resources\Receipts\Invoices\Index\PaginatedCollection;
+use App\Jobs\Invoices\RequestAuthorization;
 use App\Models\Receipts\Type as ReceiptType;
 use Exception;
 use SoapClient;
@@ -42,7 +43,7 @@ class Controller extends BaseController
             }
         }
 
-        Receipt::create([
+        $invoice = Receipt::create([
             'access_key' => $builder->access_key,
             'issuance_date' => $validated['issuance_date'],
             'number' => $builder->establishment->code
@@ -53,6 +54,8 @@ class Controller extends BaseController
             'user_id' => $user->id,
             'receipt_type_id' => ReceiptType::where('name', 'FACTURA')->first()->id
         ]);
+
+        RequestAuthorization::dispatch($invoice);
 
         return response(['message' => $status], 200);
     }

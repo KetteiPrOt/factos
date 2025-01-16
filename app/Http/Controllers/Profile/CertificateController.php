@@ -27,7 +27,7 @@ class CertificateController extends Controller
         $validated = $request->validated();
         $user = $this->authUser();
         $user->certificate->update(['password' => $validated['password']]);
-        Storage::putFileAs('/certificates', $request->file('certificate'), name: "$user->id");
+        Storage::putFileAs('/certificates' . "/$user->id.d", $request->file('certificate'), name: "$user->id");
         return $this->unlock($validated['password']);
     }
 
@@ -47,7 +47,7 @@ class CertificateController extends Controller
         $user = $this->authUser();
         $openssl = $this->openssl; $storage_path = $this->storage_path;
         $user_id = $user->id; $password = escapeshellarg($password);
-        $command = "$openssl pkcs12 -in $storage_path/certificates/$user_id -nodes -passin pass:$password";
+        $command = "$openssl pkcs12 -in $storage_path/certificates/$user_id.d/$user_id -nodes -passin pass:$password";
         $output = shell_exec($command);
         if($output){
             $this->signature = $output;
@@ -64,7 +64,7 @@ class CertificateController extends Controller
         $user = $this->authUser();
         $openssl = $this->openssl;
         $storage_path = $this->storage_path; $user_id = $user->id;
-        $file = "$storage_path/certificates/$user_id.pem";
+        $file = "$storage_path/certificates/$user_id.d/$user_id.pem";
         File::put($file, $this->signature);
         // Extract subject
         $command = "$openssl x509 -in $file -noout -subject";
