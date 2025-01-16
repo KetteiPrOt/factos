@@ -23,5 +23,5 @@ export interface TimeType {
 export const Times: TimeType[] = [
     { id: 1, name: "Años" },
     { id: 2, name: "Meses" },
-    { id: 3, name: "Dias" }
+    { id: 3, name: "Días" }
 ]

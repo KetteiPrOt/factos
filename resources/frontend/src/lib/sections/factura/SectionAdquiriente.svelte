@@ -17,6 +17,8 @@ import type { Acquirer } from "$lib/interfaces/invoice";
         email: boolean;
     }>;
 
+    export let success: boolean;
+
     let selectedIdentificationTypeId = writable(0);
 
     // Input Elements
@@ -94,6 +96,44 @@ import type { Acquirer } from "$lib/interfaces/invoice";
     //         }
     //     }
     // }
+
+    // Clear Section
+    function clearSection () {
+        $selectedIdentificationTypeId = 0;
+        inputIdentification.value = "";
+        inputSocialReason.value = "";
+        inputAddress.value = "";
+        inputPhoneNumber.value = "";
+        inputEmail.value = "";
+
+        if (inputIdentification) {
+            $bodyAcquirer.identification = "";
+            inputIdentification.disabled = false;
+        }
+        if (inputSocialReason) {
+            $bodyAcquirer.social_reason = ""
+            inputSocialReason.disabled = false;
+        }
+        if (inputPhoneNumber) {
+            $bodyAcquirer.phone_number = ""
+            inputPhoneNumber.disabled = false;
+        }
+        if (inputAddress) {
+            $bodyAcquirer.address = ""
+            inputAddress.disabled = false;
+        }
+        if (inputEmail) {
+            $bodyAcquirer.email = ""
+            inputEmail.disabled = false;
+        }
+
+    }
+
+    $: {
+        if (success) {
+            clearSection();
+        }
+    }
 
 </script>
 

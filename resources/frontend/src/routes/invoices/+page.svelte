@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import InputPassword from "$lib/components/InputPassword.svelte";
     import type { Acquirer, AdditionalField, BodyRequestInvoice, Origin, PayMethod, ProductDetails, ResumeInvoice, Totals } from "$lib/interfaces/invoice";
     import type { IssuancePoint } from "$lib/interfaces/issuance_point";
@@ -49,7 +50,7 @@
     
     
     // Section Additional Fields
-    let bodyAdditionalFields: Writable<AdditionalField[]> = writable([]);
+    let bodyAdditionalFields: Writable<AdditionalField[] | undefined> = writable([]);
     
     const indexCurrentAdditionalField: Writable<number> = writable(0);
         
@@ -211,6 +212,7 @@
         }
     }
 
+    let success = false;
     let loadingSendInvoice = false;
     async function sendInvoice () {
         if (loadingSendInvoice) { return };
@@ -233,11 +235,11 @@
             $alertsInputAcquirer.address = false;
             $alertsInputAcquirer.phone_number = false;
             $alertsInputAcquirer.email = false;
-            $bodyAcquirer.identification = ".";
-            $bodyAcquirer.social_reason = ".";
-            $bodyAcquirer.email = ".";
-            $bodyAcquirer.address = ".";
-            $bodyAcquirer.phone_number = "0";
+            $bodyAcquirer.identification = "";
+            $bodyAcquirer.social_reason = "";
+            $bodyAcquirer.email = "";
+            $bodyAcquirer.address = "";
+            $bodyAcquirer.phone_number = "";
         }
         
         if ($bodyDetails.length < 1) { alertProducts = true ; valid = false};
@@ -245,6 +247,9 @@
         if ($bodyPaymentMethods.length < 1) { alertPayMethods = true ; valid = false};
 
         if (!$bodyTotals) { $bodyTotals = undefined };
+        if (Array.isArray($bodyAdditionalFields)) {
+            if ($bodyAdditionalFields.length === 0) {$bodyAdditionalFields = undefined};
+        };
 
         Object.values($alertsInputOrigin).forEach(value => {
             if (value) {
@@ -268,7 +273,7 @@
 
         console.log("Valid: ", valid)
 
-        if (!valid) { console.log("Invalid Invoice") ; return }
+        if (!valid) { console.log("Invalid Invoice"); $bodyAdditionalFields = [] ; return }
 
         loadingSendInvoice = true;
         const res = await fetch('/api/receipts/invoices', {
@@ -285,8 +290,41 @@
         const data: {message: string} = await res.json();
 
         loadingSendInvoice = false;
+        $bodyAdditionalFields = [];
 
-        
+        success = true;
+        setTimeout(() => {
+            success = false;
+        }, 6000)
+        clearInvoice();
+    }
+
+    function clearInvoice () {
+        $bodyOrigin.establishment_id = 0;
+        $bodyOrigin.issuance_date = "";
+        $bodyOrigin.issuance_point_id = 0;
+
+        $bodyAcquirer.address = "";
+        $bodyAcquirer.email = "";
+        $bodyAcquirer.identification = "";
+        $bodyAcquirer.identification_type_id = 0;
+        $bodyAcquirer.phone_number = "";
+        $bodyAcquirer.social_reason = "";
+
+        $bodyDetails = [];
+
+        $bodyPaymentMethods = [];
+
+        $bodyAdditionalFields = [];
+
+        $bodyTotals = false;
+
+        // Object.keys($resumeInvoice).forEach((key) => {
+        //     console.log(key);
+        //     $resumeInvoice[key as keyof typeof $resumeInvoice] = 0;
+        //     console.log($resumeInvoice[key as keyof typeof $resumeInvoice]);
+        // })
+
     }
 
     const requestFunctions = {
@@ -301,20 +339,24 @@
     <h2 class="font-bold text-3xl text-center">Factura</h2>
     <div class="flex flex-col gap-7">
         <div class="flex flex-wrap gap-7 w-fit justify-center self-center">
-            <SectionOrigen {bodyOrigin} {targetEstab} {requestFunctions} {issuancePoints} {alertsInputOrigin} />
-            <SectionAdquiriente {bodyAcquirer} {alertsInputAcquirer} />
+            <SectionOrigen {success} {bodyOrigin} {targetEstab} {requestFunctions} {issuancePoints} {alertsInputOrigin} />
+            <SectionAdquiriente {success} {bodyAcquirer} {alertsInputAcquirer} />
         </div>
-        <SectionDetalles {bodyDetails} />
+        <SectionDetalles {bodyDetails} {success} />
         <div class="flex flex-wrap gap-7 w-fit justify-center max-w-full self-center">
             <div class="flex flex-col gap-7 w-fit max-w-full">
                 <SectionFormasDePago {bodyPaymentMethods} {indexCurrentPayMethod} {toggleModalAddPayMethod} {toggleModalEditPayMethod} />
                 <SectionCamposAdicionales {bodyAdditionalFields} {indexCurrentAdditionalField} {toggleModalAddAdditionalField} {toggleModalEditAdditionalField} />
             </div>
-            <SectionResumenValores {resumeInvoice} {bodyTotals} />
+            <SectionResumenValores {success} {resumeInvoice} {bodyTotals} />
         </div>
     
         <div class="flex flex-col place-items-center">
-            {#if Object.values($alertsInputOrigin).some(alert => alert)}
+            {#if success}
+            <p transition:fade class="border border-lime-500 text-lime-600 rounded-md p-3">
+                Factura emitida con éxito
+            </p>                            
+            {:else if Object.values($alertsInputOrigin).some(alert => alert)}
             <p transition:fade class="border border-red-500 text-red-500 rounded-md p-3">
                 Errores encontrados en la sección Origen
             </p>            
@@ -333,10 +375,10 @@
             {/if}
         </div>
 
-        <SectionBtns {sendInvoice} />
+        <SectionBtns {sendInvoice} {loadingSendInvoice} />
     </div>
     <ModalAddPayMethod {bodyPaymentMethods} visible={modalAddPayMethodVisible} {toggleModalAddPayMethod} />
     <ModalEditPayMethod {bodyPaymentMethods} {indexCurrentPayMethod} visible={modalEditPayMethodVisible} {toggleModalEditPayMethod} />
-    <ModalAddAdditionalField bodyAdditionalFields={bodyAdditionalFields} visible={modalAddAdditionalFieldVisible} {toggleModalAddAdditionalField} />
+    <ModalAddAdditionalField {bodyAdditionalFields} visible={modalAddAdditionalFieldVisible} {toggleModalAddAdditionalField} />
     <ModalEditAdditionalField {bodyAdditionalFields} {indexCurrentAdditionalField} visible={modalEditAdditionalFieldVisible} {toggleModalEditAdditionalField} />
 </div>

@@ -6,7 +6,7 @@
     export let visible: boolean;
     export let toggleModalEditAdditionalField: ()=>void;
 
-    export let bodyAdditionalFields: Writable<AdditionalField[]>;
+    export let bodyAdditionalFields: Writable<AdditionalField[] | undefined>;
 
     let alertsInput = {
         name: false,
@@ -42,7 +42,7 @@
 
     $: {
         $indexCurrentAdditionalField;
-        if (typeof $indexCurrentAdditionalField === "number") {
+        if (typeof $indexCurrentAdditionalField === "number" && Array.isArray($bodyAdditionalFields)) {
             let af = $bodyAdditionalFields[$indexCurrentAdditionalField];
             if (af) {
                 updateCurrentAdditionalField(af.name, af.description);
@@ -71,7 +71,7 @@
 
     // Add function
     function editCurrentAdditionalField () {
-        if (validateCurrentAdditionalField()) {
+        if (validateCurrentAdditionalField() && Array.isArray($bodyAdditionalFields)) {
             $bodyAdditionalFields[$indexCurrentAdditionalField] = currentAdditionalField;
             clearCurrentAdditionalField();
             toggleModalEditAdditionalField();

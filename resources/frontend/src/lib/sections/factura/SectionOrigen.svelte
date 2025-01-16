@@ -20,11 +20,16 @@
         issuance_point_id: boolean
     }>;
 
+    export let success: boolean;
+
     let estabs: Option[] = [];
     let issuancePointsAsOptions: Option[] = [];
 
     // Input Elements
     let dateInput: HTMLInputElement;
+
+    let remisionInput: HTMLInputElement;
+    let chekComercial: HTMLInputElement;
 
     // Update Functions
     function updateDate (e: Event) {
@@ -33,6 +38,10 @@
 
         $bodyOrigin.issuance_date = value;
         $alertsInputOrigin.issuance_date = false;
+
+        if (!value) {
+            clearOtherInputs();
+        }
     }
 
     $: {
@@ -45,9 +54,14 @@
         $alertsInputOrigin.issuance_point_id = false;
     }
 
-    // $: {
-    //     console.log($bodyOrigin)
-    // }
+    function clearOtherInputs () {
+        if (remisionInput) {
+            remisionInput.value = ""
+        }
+        if (chekComercial) {
+            chekComercial.checked = false;
+        }
+    }
 
     // Request Functions
     async function getEstabs () {
@@ -98,6 +112,21 @@
         $selectedIssuancePoint = 0;
     }
 
+    // Clear Section
+    function clearSection () {
+        $targetEstab = 0;
+        dateInput.value = "";
+        $selectedIssuancePoint = 0;
+        remisionInput.value = "";
+        chekComercial.checked = false;
+    }
+
+    $: {
+        if (success) {
+            clearSection();
+        }
+    }
+
     onMount(getEstabs);
 
 </script>
@@ -125,11 +154,11 @@
         </div>
         <div class="flex flex-row gap-5">
             <label for="guia_remision">Guía de remision:</label>
-            <input name="guia_remision" class="border border-[--color-border] bg-transparent rounded-md px-1 w-[205px] ml-auto place-self-center" type="text">
+            <input bind:this={remisionInput} name="guia_remision" class="border border-[--color-border] bg-transparent outline-none rounded-md px-1 w-[205px] ml-auto place-self-center" type="text">
         </div>
         <div class="flex flex-row gap-6">
             <label for="factura">Factura comercial <br> negociable:</label>
-            <input name="guia_remision" class="border border-[--color-border] bg-transparent rounded-md px-1 mr-auto" type="checkbox">
+            <input bind:this={chekComercial} name="guia_remision" class="border border-[--color-border] bg-transparent outline-none rounded-md px-1 mr-auto" type="checkbox">
         </div>
     </section>
 </div>

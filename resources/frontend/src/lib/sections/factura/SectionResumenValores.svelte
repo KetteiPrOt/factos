@@ -5,6 +5,18 @@
     export let resumeInvoice: Writable<ResumeInvoice>;
     export let bodyTotals: Writable<boolean | undefined | null>;
 
+    export let success: boolean;
+
+    $: {
+        if (success) {
+            Object.keys($resumeInvoice).forEach((key) => {
+                console.log(key);
+                $resumeInvoice[key as keyof typeof $resumeInvoice] = 0;
+                console.log($resumeInvoice[key as keyof typeof $resumeInvoice]);
+            });
+        }
+    }
+
 </script>
 
 <div class="flex flex-col border border-[--color-border] p-4 rounded-lg gap-4 box-border w-fit max-w-full place-self-center mb-auto">

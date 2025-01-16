@@ -60,7 +60,7 @@ class IssueRequest extends FormRequest
             'phone_number' => [
                 'bail', "exclude_if:identification_type_id,$finalConsumer", 'string', 'size:10', new NumericDigits,
             ],
-            'address' => "string|max:255|exclude_if:identification_type_id,$finalConsumer",
+            'address' => "exclude_if:identification_type_id,$finalConsumer|string|max:255",
             'email' => [
                 "required_unless:identification_type_id,$finalConsumer",
                 "exclude_if:identification_type_id,$finalConsumer",
