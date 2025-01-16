@@ -9,7 +9,6 @@ use App\Models\Establishments\Model as Establishment;
 use App\Models\Products\Model as Product;
 use App\Models\Persons\IdentificationType;
 use App\Rules\Entities\Receipts\Invoices\Discount;
-use App\Rules\Entities\Receipts\Invoices\PaymentValue;
 use App\Rules\Model\BelgonsTo;
 use App\Rules\String\ExactSizes;
 use App\Rules\String\NumericDigits;
@@ -84,9 +83,7 @@ class IssueRequest extends FormRequest
             'payment_methods' => 'required|array|max:10',
             'payment_methods.*' => 'required|array:pay_method_id,value,term,time|min:2|max:4',
             'payment_methods.*.pay_method_id' => 'required|integer|exists:pay_methods,id|distinct',
-            'payment_methods.*.value' => [
-                'bail', 'required', 'decimal:0,2', 'min:0', 'max:999999.99', new PaymentValue
-            ],
+            'payment_methods.*.value' => ['bail', 'required', 'decimal:0,2', 'min:0', 'max:999999.99'],
             'payment_methods.*.term' => 'integer|min:1|max:99999',
             'payment_methods.*.time' => [
                 'string', Rule::in(['Años', 'Meses', 'Días'])

@@ -18,10 +18,20 @@ class Controller extends BaseController
     {
         $validated = $request->validated();
         $user = $this->authUser();
+    
         // Check certificate is uploaded
         if( ! $user->certificate->uploaded )
             return response(['message' => 'No se ha subido la firma electrónica.'], 422);
+    
         $raw = $builder->build($validated, $user);
+
+        // Check total value
+        if($builder->total_pay_methods > floatval($builder->total))
+            return response(
+                ['message' => 'Los pagos deben ser menor o iguales a la suma total de la factura.'],
+                422
+            );
+    
         $signed = $signer->sign($raw, $user, $this->openssl);
     
         try {
@@ -62,14 +72,10 @@ class Controller extends BaseController
 
     public function index(IndexRequest $request)
     {
-        $validated = $request->validated();
+        // $validated = $request->validated();
         $receipts = Receipt::where('user_id', $this->authUser()->id);
-        if(isset($validated['date_from'])){
-            // set where
-        }
         return new PaginatedCollection(
             $receipts->orderBy('issuance_date')->paginate(10)->withQueryString()
         );
-        return 'Indice de facturas';
     }
 }

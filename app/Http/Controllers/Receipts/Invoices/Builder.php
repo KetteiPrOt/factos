@@ -36,7 +36,9 @@ class Builder
 
     private string $total_discount = '0.00';
 
-    private string $total = '0.00';
+    public string $total = '0.00';
+
+    public float $total_pay_methods = 0;
 
     /**
      * Array to save the total tax values. Keys: <tax_type>-<code>.
@@ -168,6 +170,7 @@ class Builder
     {
         $vatRate = $product->vatRate;
         $base = bcmul($data['price'], $data['amount'], 2);
+        $base = bcsub($base, $data['discount'], 2);
         $total = bcmul(bcdiv($base, 100, 2), $vatRate->percentaje, 2);
         $taxes = 
                            "<impuesto>\n"
@@ -266,6 +269,7 @@ class Builder
             $first = $i == 0; $last = $i == ($count - 1); $i++;
             $payMethod = PayMethod::find($pay_method_data['pay_method_id']);
             $total = $pay_method_data['value'];
+            $this->total_pay_methods += $total;
             $pay_method =
                     ($first ? "<pago>\n"
             : "                <pago>\n")

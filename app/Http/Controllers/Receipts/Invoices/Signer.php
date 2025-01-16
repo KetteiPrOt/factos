@@ -75,9 +75,9 @@ class Signer
 
         $signed_invoice = str_replace('</factura>', $XAdES_BES, $raw);
 
-        // foreach($this->generatedFiles as $generatedFile){
-        //     Storage::disk('local')->delete($this->short_path . '/' . $generatedFile);
-        // }
+        foreach($this->generatedFiles as $generatedFile){
+            Storage::disk('local')->delete($this->short_path . '/' . $generatedFile);
+        }
 
         return $signed_invoice;
     }
