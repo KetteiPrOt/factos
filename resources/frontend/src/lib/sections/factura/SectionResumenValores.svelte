@@ -1,11 +1,13 @@
 <script lang="ts">
     import type { ResumeInvoice } from "$lib/interfaces/invoice";
+    import { onMount } from "svelte";
     import type { Writable } from "svelte/store";
 
     export let resumeInvoice: Writable<ResumeInvoice>;
     export let bodyTotals: Writable<boolean | undefined | null>;
 
     export let success: boolean;
+    export let saving: boolean;
 
     $: {
         if (success) {
@@ -14,8 +16,33 @@
                 $resumeInvoice[key as keyof typeof $resumeInvoice] = 0;
                 console.log($resumeInvoice[key as keyof typeof $resumeInvoice]);
             });
+            if (typeof window !== "undefined") {
+                removeData();
+            }
         }
     }
+
+    $: {
+        if (saving) {
+            if (typeof window !== "undefined") {
+                window.localStorage.setItem("tip_ten_percent", JSON.stringify($bodyTotals))            
+            }
+        }
+    }
+
+    function loadData () {
+        const dataJson = window.localStorage.getItem("tip_ten_percent");
+        if (dataJson !== null) {
+            const data: boolean = JSON.parse(dataJson);
+            bodyTotals.set(data);
+        }
+    }
+
+    function removeData () {
+        window.localStorage.removeItem("tip_ten_percent");
+    }
+
+    onMount(loadData);
 
 </script>
 

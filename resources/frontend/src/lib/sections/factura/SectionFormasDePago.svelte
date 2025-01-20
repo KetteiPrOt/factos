@@ -7,6 +7,9 @@
     import { writable, type Writable } from "svelte/store";
     import { fade } from "svelte/transition";
 
+    export let saving: boolean;
+    export let success: boolean;
+
     export let toggleModalAddPayMethod: () => void;
     export let toggleModalEditPayMethod: () => void;
     
@@ -47,6 +50,36 @@
             toggleModalEditPayMethod();
         }
     }
+
+    $: {
+        if (success) {
+            if (typeof window !== "undefined") {
+                removeData();
+            }
+        }
+    }
+
+    $: {
+        if (saving) {
+            if (typeof window !== "undefined") {
+                window.localStorage.setItem("list_payment_methods", JSON.stringify($bodyPaymentMethods))            
+            }
+        }
+    }
+
+    function loadData () {
+        const dataJson = window.localStorage.getItem("list_payment_methods");
+        if (dataJson !== null) {
+            const data: PayMethod[] = JSON.parse(dataJson);
+            bodyPaymentMethods.set(data);
+        }
+    }
+
+    function removeData () {
+        window.localStorage.removeItem("list_payment_methods");
+    }
+
+    onMount(loadData);
 
 
     

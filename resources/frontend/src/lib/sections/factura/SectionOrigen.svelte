@@ -21,6 +21,7 @@
     }>;
 
     export let success: boolean;
+    export let saving: boolean;
 
     let estabs: Option[] = [];
     let issuancePointsAsOptions: Option[] = [];
@@ -124,10 +125,46 @@
     $: {
         if (success) {
             clearSection();
+            if (typeof window !== "undefined") {
+                removeData();
+            }
         }
     }
 
-    onMount(getEstabs);
+    $: {
+        if (saving) {
+            if (typeof window !== "undefined") {
+                window.localStorage.setItem("body_origin", JSON.stringify($bodyOrigin))            
+            }
+        }
+    }
+
+    function loadData () {
+        const dataJson = window.localStorage.getItem("body_origin");
+        if (dataJson !== null) {
+            const data: Origin = JSON.parse(dataJson);
+            //console.log(data);
+            if (dateInput ){ 
+                dateInput.value = data.issuance_date;
+            }
+            $bodyOrigin.issuance_date = data.issuance_date;
+            targetEstab.set(data.establishment_id);
+            $bodyOrigin.establishment_id = data.establishment_id;
+            setTimeout(() => {
+                selectedIssuancePoint.set(data.issuance_point_id);
+                $bodyOrigin.issuance_point_id = data.issuance_point_id;
+            }, 1000)
+        }
+    }
+
+    function removeData () {
+        window.localStorage.removeItem("body_origin");
+    }
+
+    onMount(() => {
+        getEstabs();
+        loadData();
+    });
 
 </script>
 

@@ -92,11 +92,11 @@
                 {#if dropConfVisible}
                 <div transition:slide={{axis: "y"}} class="absolute top-[32px] bg-slate-50/70 backdrop-blur rounded-b-md p-1 text-[--color-theme-1] font-medium text-center">
                     <ul>
-                        <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                        <!-- <li class="border-b border-transparent hover:border-[--color-theme-1]">
                             <button class="block w-full">
                                 Datos emisor
                             </button>
-                        </li>
+                        </li> -->
                         <li class="border-b border-transparent hover:border-[--color-theme-1]">
                             <a class="block" href="products" on:click={()=>closeAllDrops()}>
                                 Productos y servicios
@@ -151,11 +151,11 @@
                                 Administración
                             </a>
                         </li>
-                        <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                        <!-- <li class="border-b border-transparent hover:border-[--color-theme-1]">
                             <a class="block" href="receipts_unauthorized" on:click={()=>closeAllDrops()}>
                                 No autorizados
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
                 {/if}
@@ -203,11 +203,11 @@
                     {#if dropConfVisible}
                     <div transition:slide={{axis: "y"}} class="absolute top-[32px] bg-slate-50/70 backdrop-blur  rounded-b-md p-1 text-[--color-theme-1] font-medium text-center z-10">
                         <ul>
-                            <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                            <!-- <li class="border-b border-transparent hover:border-[--color-theme-1]">
                                 <button class="block w-full">
                                     Datos emisor
                                 </button>
-                            </li>
+                            </li> -->
                             <li class="border-b border-transparent hover:border-[--color-theme-1]">
                                 <a class="block" href="products" on:click={closeLBarVisible}>
                                     Productos y servicios
@@ -262,11 +262,11 @@
                                     Administración
                                 </a>
                             </li>
-                            <li class="border-b border-transparent hover:border-[--color-theme-1]">
+                            <!-- <li class="border-b border-transparent hover:border-[--color-theme-1]">
                                 <a class="block" href="receipts_unauthorized" on:click={closeLBarVisible}>
                                     No autorizados
                                 </a>
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
                     {/if}

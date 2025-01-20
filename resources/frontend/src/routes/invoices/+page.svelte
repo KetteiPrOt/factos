@@ -18,7 +18,7 @@
 	import SectionResumenValores from "$lib/sections/factura/SectionResumenValores.svelte";
     import { onMount } from "svelte";
     import { writable, type Writable, type Readable, derived } from "svelte/store";
-	import { fade } from "svelte/transition";
+	import { fade, slide } from "svelte/transition";
 
     
     // Section Origin
@@ -30,7 +30,7 @@
     let bodyAcquirer: Writable<Acquirer> = writable({identification: "", identification_type_id: 0, social_reason: "", email: ""});
 
     // Section Details
-    let bodyDetails: Writable<ProductDetails[]> = writable([]);
+    const bodyDetails: Writable<ProductDetails[]> = writable([]);
 
     // Section Payment Methods
     let bodyPaymentMethods: Writable<PayMethod[]> = writable([]);
@@ -167,10 +167,6 @@
         }
     }
 
-    $: {
-        console.log($bodyAcquirer.phone_number)
-    }
-
     function checkPhoneNumber () {
         let valid = true;
         if ($bodyAcquirer.phone_number) {
@@ -213,6 +209,9 @@
     }
 
     let success = false;
+    let failed = false;
+    let failed422 = false;
+    let saving = false;
     let loadingSendInvoice = false;
     async function sendInvoice () {
         if (loadingSendInvoice) { return };
@@ -292,33 +291,60 @@
         loadingSendInvoice = false;
         $bodyAdditionalFields = [];
 
-        success = true;
-        setTimeout(() => {
-            success = false;
-        }, 6000)
-        clearInvoice();
+        if (res.ok) {
+            success = true;
+            setTimeout(() => {
+                success = false;
+            }, 6000)
+            clearInvoice();
+            
+        } else if (res.status === 422) {
+            failed422 = true;
+            setTimeout(() => {
+                failed422 = false;
+            }, 6000)
+        } else if (data.message === 'Attempt to read property \"uploaded\" on null') {
+            failed422 = true;
+            setTimeout(() => {
+                failed422 = false;
+            }, 6000)
+        } else {
+            failed = true;
+            setTimeout(() => {
+                failed = false;
+            }, 6000)
+            
+        }
     }
+
+    function saveInvoice () {
+        saving = true;
+        setTimeout(() => {
+            saving = false;
+        }, 2000)
+    }
+
+    
 
     function clearInvoice () {
         $bodyOrigin.establishment_id = 0;
         $bodyOrigin.issuance_date = "";
         $bodyOrigin.issuance_point_id = 0;
-
+    
         $bodyAcquirer.address = "";
         $bodyAcquirer.email = "";
         $bodyAcquirer.identification = "";
         $bodyAcquirer.identification_type_id = 0;
         $bodyAcquirer.phone_number = "";
         $bodyAcquirer.social_reason = "";
-
+    
         $bodyDetails = [];
-
+    
         $bodyPaymentMethods = [];
-
+    
         $bodyAdditionalFields = [];
-
+        
         $bodyTotals = false;
-
         // Object.keys($resumeInvoice).forEach((key) => {
         //     console.log(key);
         //     $resumeInvoice[key as keyof typeof $resumeInvoice] = 0;
@@ -331,7 +357,9 @@
         loadIssuancePoints: loadIssuancePoints
     }
 
-    onMount(loadIssuancePoints);
+    onMount(() => {
+        loadIssuancePoints();
+    });
 	
 </script>
 
@@ -339,43 +367,55 @@
     <h2 class="font-bold text-3xl text-center">Factura</h2>
     <div class="flex flex-col gap-7">
         <div class="flex flex-wrap gap-7 w-fit justify-center self-center">
-            <SectionOrigen {success} {bodyOrigin} {targetEstab} {requestFunctions} {issuancePoints} {alertsInputOrigin} />
-            <SectionAdquiriente {success} {bodyAcquirer} {alertsInputAcquirer} />
+            <SectionOrigen {success} {saving} {bodyOrigin} {targetEstab} {requestFunctions} {issuancePoints} {alertsInputOrigin} />
+            <SectionAdquiriente {success} {saving} {bodyAcquirer} {alertsInputAcquirer} />
         </div>
-        <SectionDetalles {bodyDetails} {success} />
+        <SectionDetalles {bodyDetails} {success} {saving} />
         <div class="flex flex-wrap gap-7 w-fit justify-center max-w-full self-center">
             <div class="flex flex-col gap-7 w-fit max-w-full">
-                <SectionFormasDePago {bodyPaymentMethods} {indexCurrentPayMethod} {toggleModalAddPayMethod} {toggleModalEditPayMethod} />
-                <SectionCamposAdicionales {bodyAdditionalFields} {indexCurrentAdditionalField} {toggleModalAddAdditionalField} {toggleModalEditAdditionalField} />
+                <SectionFormasDePago {success} {saving} {bodyPaymentMethods} {indexCurrentPayMethod} {toggleModalAddPayMethod} {toggleModalEditPayMethod} />
+                <SectionCamposAdicionales {success} {saving} {bodyAdditionalFields} {indexCurrentAdditionalField} {toggleModalAddAdditionalField} {toggleModalEditAdditionalField} />
             </div>
-            <SectionResumenValores {success} {resumeInvoice} {bodyTotals} />
+            <SectionResumenValores {saving} {success} {resumeInvoice} {bodyTotals} />
         </div>
     
         <div class="flex flex-col place-items-center">
             {#if success}
-            <p transition:fade class="border border-lime-500 text-lime-600 rounded-md p-3">
+            <p transition:slide={{axis: "y"}} class="border border-lime-500 text-lime-600 rounded-md p-3">
                 Factura emitida con éxito
             </p>                            
+            {:else if failed422}
+            <p transition:slide={{axis: "y"}} class="border border-red-500 text-red-600 rounded-md p-3">
+                No se encontró la firma electrónica para procesar la factura
+            </p>                            
+            {:else if failed}
+            <p transition:slide={{axis: "y"}} class="border border-red-500 text-red-600 rounded-md p-3">
+                Error al procesar la factura
+            </p>                            
+            {:else if saving}
+            <p transition:slide={{axis: "y"}} class="border border-yellow-500 text-yellow-600 rounded-md p-3">
+                La factura ha sido guardada
+            </p>                            
             {:else if Object.values($alertsInputOrigin).some(alert => alert)}
-            <p transition:fade class="border border-red-500 text-red-500 rounded-md p-3">
+            <p transition:slide={{axis: "y"}} class="border border-red-500 text-red-500 rounded-md p-3">
                 Errores encontrados en la sección Origen
             </p>            
             {:else if Object.values($alertsInputAcquirer).some(alert => alert)}
-            <p transition:fade class="border border-red-500 text-red-500 rounded-md p-3">
+            <p transition:slide={{axis: "y"}} class="border border-red-500 text-red-500 rounded-md p-3">
                 Errores encontrados en la sección Adquiriente
             </p>            
             {:else if alertProducts}
-            <p transition:fade class="border border-red-500 text-red-500 rounded-md p-3">
+            <p transition:slide={{axis: "y"}} class="border border-red-500 text-red-500 rounded-md p-3">
                 Necesita seleccionar un producto antes de continuar
             </p>
             {:else if alertPayMethods}
-            <p transition:fade class="border border-red-500 text-red-500 rounded-md p-3">
+            <p transition:slide={{axis: "y"}} class="border border-red-500 text-red-500 rounded-md p-3">
                 Necesita añadir un método de pago antes de continuar
             </p>
             {/if}
         </div>
 
-        <SectionBtns {sendInvoice} {loadingSendInvoice} />
+        <SectionBtns {sendInvoice} {saveInvoice} {loadingSendInvoice} />
     </div>
     <ModalAddPayMethod {bodyPaymentMethods} visible={modalAddPayMethodVisible} {toggleModalAddPayMethod} />
     <ModalEditPayMethod {bodyPaymentMethods} {indexCurrentPayMethod} visible={modalEditPayMethodVisible} {toggleModalEditPayMethod} />

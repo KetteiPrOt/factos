@@ -1,7 +1,8 @@
 <script lang="ts">
     import Select from "$lib/components/Select.svelte";
     import { IdentificationTypes } from "$lib/interfaces/identification";
-import type { Acquirer } from "$lib/interfaces/invoice";
+    import type { Acquirer } from "$lib/interfaces/invoice";
+    import { onMount } from "svelte";
     import type { HTMLInputAttributes } from "svelte/elements";
     import { writable, type Writable } from "svelte/store";
 
@@ -18,6 +19,7 @@ import type { Acquirer } from "$lib/interfaces/invoice";
     }>;
 
     export let success: boolean;
+    export let saving: boolean;
 
     let selectedIdentificationTypeId = writable(0);
 
@@ -132,8 +134,43 @@ import type { Acquirer } from "$lib/interfaces/invoice";
     $: {
         if (success) {
             clearSection();
+            if (typeof window !== "undefined") {
+                removeData();
+            }
         }
     }
+
+    $: {
+        if (saving) {
+            if (typeof window !== "undefined") {
+                window.localStorage.setItem("body_acquirer", JSON.stringify($bodyAcquirer));  
+            }
+        }
+    }
+
+    function loadData () {
+        const dataJson = window.localStorage.getItem("body_acquirer");
+        if (dataJson !== null) {
+            const data: Acquirer = JSON.parse(dataJson);
+            //console.log(data);
+            selectedIdentificationTypeId.set(data.identification_type_id);
+            if (data.identification_type_id !== 4) {
+                setTimeout(() => {
+                    $bodyAcquirer.identification = data.identification;
+                    $bodyAcquirer.social_reason = data.social_reason;
+                    $bodyAcquirer.address = data.address;
+                    $bodyAcquirer.phone_number = data.phone_number;
+                    $bodyAcquirer.email = data.email;
+                }, 1000)
+            }
+        }
+    }
+
+    function removeData () {
+        window.localStorage.removeItem("body_acquirer");
+    }
+
+    onMount(loadData);
 
 </script>
 

@@ -10,8 +10,8 @@ import type { Pagination } from "$lib/interfaces/pagination";
     export let codeToSearch: Writable<string>;
 
     export let requestFunctions: {
-        loadProducts: (url: string | undefined) => Promise<void>;
-        getProductById: () => Promise<void>;
+        loadReceiptInvoices: (url: string | undefined) => Promise<void>;
+        getReceiptInvoiceById: () => Promise<void>;
     }
 
     function updateNameToSearch (e: Event) {
@@ -33,7 +33,7 @@ import type { Pagination } from "$lib/interfaces/pagination";
     }
 
     async function searchProducts () {
-        requestFunctions.loadProducts(`/api/products?code=${$codeToSearch}&name=${$nameToSearch}`)
+        requestFunctions.loadReceiptInvoices(`/api/products?code=${$codeToSearch}&name=${$nameToSearch}`)
         
     }
 

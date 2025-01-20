@@ -1,3 +1,4 @@
+import type { ReceiptInvoice } from "./invoice";
 import type { IssuancePoint } from "./issuance_point";
 import type { Person } from "./person";
 import type { Product } from "./product";
@@ -23,4 +24,8 @@ export interface PaginationIssuancePonints extends Omit<Pagination, 'data'> {
 
 export interface PaginationPersons extends Omit<Pagination, 'data'> {
     data: Person[]
+}
+
+export interface PaginationReceiptInvonces extends Omit<Pagination, 'data'> {
+    data: ReceiptInvoice[]
 }

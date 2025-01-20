@@ -68,14 +68,6 @@ import type { Ice } from "$lib/interfaces/ice";
         }
     }
 
-    $: {
-        console.log(newPayMethod);
-    }
-
-    $: {
-        console.log($bodyPaymentMethods)
-    }
-
     // Validation function
     function validateNewPayMethod () {
         let valid = true;
@@ -140,11 +132,11 @@ import type { Ice } from "$lib/interfaces/ice";
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="value">Valor:</label>
-                    <input bind:value={newPayMethod.value} name="value" class="border border-[--color-border] text-center {alertsInput.value ? 'border-red-500' : ''} bg-transparent outline-none rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={updateValue} on:click={(e)=>selectThisInput(e)}>
+                    <input bind:value={newPayMethod.value} name="value" min="0" class="border border-[--color-border] text-center {alertsInput.value ? 'border-red-500' : ''} bg-transparent outline-none rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={updateValue} on:click={(e)=>selectThisInput(e)}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="term">Plazo:</label>
-                    <input bind:value={newPayMethod.term} name="term" class="border border-[--color-border] text-center {alertsInput.term ? 'border-red-500' : ''} bg-transparent outline-none rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={updateTerm} on:click={(e)=>selectThisInput(e)}>
+                    <input bind:value={newPayMethod.term} name="term" min="0" class="border border-[--color-border] text-center {alertsInput.term ? 'border-red-500' : ''} bg-transparent outline-none rounded-md px-1 ml-auto h-[26px] w-[205px] place-self-center" type="number" on:input={updateTerm} on:click={(e)=>selectThisInput(e)}>
                 </div>
                 <div class="flex flex-row gap-5">
                     <label for="time">Tiempo:</label>

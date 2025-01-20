@@ -76,3 +76,14 @@ export interface BodyRequestInvoice {
     //Section Totals
     tip_ten_percent?: boolean | null
 }
+
+
+
+export interface ReceiptInvoice {
+    id: number
+    access_key: string
+    issuance_date: string
+    number: string
+    status: string
+    receipt_type: string | null 
+}

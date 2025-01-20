@@ -2,6 +2,7 @@
     import ResultsSearch from "$lib/components/ResultsSearch.svelte";
     import type { ProductDetails, ProductDetailsToShow, ProductGet, ProductSearch } from "$lib/interfaces/product";
     import { VatTypes } from "$lib/interfaces/vat";
+    import { onMount } from "svelte";
 	import { Icon } from "svelte-icons-pack";
 	import { AiOutlineSearch } from "svelte-icons-pack/ai";
     import { BiTrash } from "svelte-icons-pack/bi";
@@ -11,6 +12,7 @@
     export let bodyDetails: Writable<ProductDetails[]>;
 
     export let success: boolean;
+    export let saving: boolean;
 
     let listProducts: ProductSearch[] = []
     let selectedProduct = writable(0);
@@ -118,12 +120,7 @@
         
     } 
 
-    $: {
-        if (success) {
-            listProductsDetails = [];
-        };
-    }
-
+    
     $: {
         bodyDetails.set([])
         listProductsDetails.forEach((p) => {
@@ -133,6 +130,37 @@
             $bodyDetails = [...$bodyDetails, {product_id: p.id, amount: p.amount, price: p.price, discount: p.discount}]
         });
     }
+    
+    $: {
+        if (success) {
+            listProductsDetails = [];
+            if (typeof window !== "undefined") {
+                removeData();
+            }
+        };
+    }
+
+    $: {
+        if (saving) {
+            if (typeof window !== "undefined") {
+                window.localStorage.setItem("list_products_details", JSON.stringify(listProductsDetails))            
+            }
+        }
+    }
+
+    function loadData () {
+        const dataJson = window.localStorage.getItem("list_products_details");
+        if (dataJson !== null) {
+            const data: ProductDetailsToShow[] = JSON.parse(dataJson);
+            listProductsDetails = data;
+        }
+    }
+
+    function removeData () {
+        window.localStorage.removeItem("list_products_details");
+    }
+
+    onMount(loadData);
 
 
 </script>

@@ -6,6 +6,9 @@
     import type { Writable } from "svelte/store";
     import { fade } from "svelte/transition";
 
+    export let saving: boolean;
+    export let success: boolean;
+
     export let bodyAdditionalFields: Writable<AdditionalField[] | undefined>;
     export let indexCurrentAdditionalField: Writable<number>;
     export let toggleModalAddAdditionalField: () => void;
@@ -37,9 +40,35 @@
         }
     };
 
-    // onMount(() => {
-    //     $bodyAdditionalFields = [{name: "Additional 1", description: "Description 1"}, {name: "Additional 2", description: "Description 2"}]
-    // })
+    $: {
+        if (success) {
+            if (typeof window !== "undefined") {
+                removeData();
+            }
+        }
+    }
+
+    $: {
+        if (saving) {
+            if (typeof window !== "undefined") {
+                window.localStorage.setItem("list_additional_fields", JSON.stringify($bodyAdditionalFields));
+            }
+        }
+    }
+
+    function loadData () {
+        const dataJson = window.localStorage.getItem("list_additional_fields");
+        if (dataJson !== null) {
+            const data: AdditionalField[] = JSON.parse(dataJson);
+            bodyAdditionalFields.set(data);
+        }
+    }
+
+    function removeData () {
+        window.localStorage.removeItem("list_additional_fields");
+    }
+
+    onMount(loadData);
 
 </script>
 

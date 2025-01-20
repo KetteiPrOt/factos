@@ -1,5 +1,6 @@
 <script lang="ts">
-    import type { Pagination } from "$lib/interfaces/pagination";
+    import type { ReceiptInvoice } from "$lib/interfaces/invoice";
+    import type { Pagination, PaginationReceiptInvonces } from "$lib/interfaces/pagination";
 	import type { Product, ProductGet } from "$lib/interfaces/product";
 	import { onMount } from "svelte";
 
@@ -9,19 +10,19 @@
 	import type { Writable } from "svelte/store";
     import { fade } from "svelte/transition";
 
-    // export let requestFunctions: {
-    //     loadProducts: (url: string | undefined) => Promise<void>;
-    //     getProductById: () => Promise<void>;
-    // }
+    export let requestFunctions: {
+        loadReceiptInvoices: (url: string | undefined) => Promise<void>;
+        getReceiptInvoiceById: () => Promise<void>;
+    }
 
-    // export let products: Writable<Product[]>;
+    export let receiptInvoices: Writable<ReceiptInvoice[]>;
     // export let productSelected: Writable<ProductGet>;
 
     // export let toogleModalViewProductVisible: ()=>void;
 
     // export let idToSearch: Writable<string>;
 
-    // export let paginationData: Writable<Pagination>;
+    export let paginationData: Writable<PaginationReceiptInvonces>;
 
     
 
@@ -42,17 +43,17 @@
 
     }
 
-    // function loadNextPage () {
-    //     if ($paginationData.links?.next) {
-    //         requestFunctions.loadProducts($paginationData.links?.next)
-    //     }
-    // }
+    function loadNextPage () {
+        if ($paginationData.links?.next) {
+            requestFunctions.loadReceiptInvoices($paginationData.links?.next)
+        }
+    }
 
-    // function loadPrevPage () {
-    //     if ($paginationData.links?.prev) {
-    //         requestFunctions.loadProducts($paginationData.links?.prev)
-    //     }
-    // }
+    function loadPrevPage () {
+        if ($paginationData.links?.prev) {
+            requestFunctions.loadReceiptInvoices($paginationData.links?.prev)
+        }
+    }
     
     // onMount(()=>requestFunctions.loadProducts(undefined))
 
@@ -66,99 +67,66 @@
             <thead class="bg-[--color-theme-1]">
                 <tr>
                     <th>Fecha de emisión</th>
-                    <th>Tipo de comprobante</th>
+                    <!-- <th>Tipo de comprobante</th> -->
                     <th>Número de comprobante</th>
-                    <th>Identificación</th>
-                    <th>Razón social</th>
+                    <!-- <th>Identificación</th> -->
+                    <!-- <th>Razón social</th> -->
                     <th>Clave de acceso</th>
-                    <th>Valor total</th>
+                    <!-- <th>Valor total</th> -->
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="hover:bg-slate-300">
+                {#each $receiptInvoices as receiptInvoice}
+                <tr in:fade={{delay: ($receiptInvoices.indexOf(receiptInvoice)*50)}} class="hover:bg-slate-300" data-id="{receiptInvoice.id}">
                     <td>
                         <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Fecha de emisión
+                            {receiptInvoice.issuance_date}
+                        </button>
+                    </td>
+                    <!-- <td>
+                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
+                            {receiptInvoice.receipt_type}
+                        </button>
+                    </td> -->
+                    <td>
+                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
+                            {receiptInvoice.number}
+                        </button>
+                    </td>
+                    <!-- <td>
+                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
+                            {"Identificación"}
                         </button>
                     </td>
                     <td>
                         <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Tipo de comprobante
+                            {"Razón social"}
+                        </button>
+                    </td> -->
+                    <td>
+                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
+                            {receiptInvoice.access_key}
                         </button>
                     </td>
                     <td>
                         <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Número de comprobante
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Identificación
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Razón social
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Clave de acceso
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Valor total
-                        </button>
-                    </td>
-                </tr>
-                <tr class="hover:bg-slate-300">
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Fecha de emisión
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Tipo de comprobante
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Número de comprobante
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Identificación
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Razón social
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Clave de acceso
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w-full h-full p-2" on:click={(e)=>selectProduct(e)}>
-                            Valor total
+                            {receiptInvoice.status}
                         </button>
                     </td>
                 </tr>
+                {/each}
+                
             </tbody>
         </table>
     </div>
     <div class="w-full bg-[--color-theme-1] flex flex-row justify-center text-slate-50 p-1 place-items-center gap-4 rounded-b-md">
-        <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50">
+        <button class="flex flex-row gap-2 place-items-center bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50" on:click={loadPrevPage}>
             <Icon src={AiFillFastBackward} size={20}/>
         </button>
         <div class="flex flex-row gap-1">
             <span>
-                <!-- {#if $paginationData}
+                {#if $paginationData}
                     {#if $paginationData.meta.total > 0}
                         {$paginationData.meta.current_page}
                     {:else}
@@ -166,14 +134,13 @@
                     {/if}
                 {:else}
                     0
-                {/if} -->
-                1
+                {/if}
             </span>
             <span>
                 de
             </span>
             <span>
-                <!-- {#if $paginationData}
+                {#if $paginationData}
                     {#if $paginationData.meta.total > 0}
                         {$paginationData.meta.last_page}
                     {:else}
@@ -181,12 +148,11 @@
                     {/if}
                 {:else}
                     0
-                {/if} -->
-                1
+                {/if}
             </span>
 
         </div>
-        <button class="flex flex-row gap-2 align-middle bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50">
+        <button class="flex flex-row gap-2 align-middle bg-[--color-theme-1] py-1 px-2 rounded-md shadow-sm shadow-black hover:shadow hover:shadow-black hover:bg-blue-600 text-slate-50" on:click={loadNextPage}>
             <Icon src={AiFillFastForward} size={20}/>
         </button>
     </div>
